@@ -1,0 +1,3258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sunday Class Attendance</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+/* ── THEMES ── */
+html{font-size:14px;}
+:root{
+  --bg:#f0f4ff;--card:#fff;--primary:#1F4E79;--pri2:#2E75B6;
+  --present:#43a047;--absent:#e53935;
+  --text:#1a1a2e;--muted:#666;--border:#e0e6f0;
+  --shadow:0 4px 24px rgba(31,78,121,.10);--r:16px;
+  --male:#1976d2;--female:#c2185b;
+  --input-bg:#fff;--header-text:#fff;
+}
+
+/* Dark mode */
+[data-theme="dark"]{
+  --bg:#0f1117;--card:#1a1d27;--primary:#4a9eed;--pri2:#64b5f6;
+  --text:#e8eaf0;--muted:#9aa0b0;--border:#2a2f3e;
+  --shadow:0 4px 24px rgba(0,0,0,.35);
+  --input-bg:#1e2130;--header-text:#e8eaf0;
+  --present:#4caf50;--absent:#ef5350;
+  --male:#64b5f6;--female:#f48fb1;
+}
+/* Dark — fix hardcoded whites */
+[data-theme="dark"] .lcard,[data-theme="dark"] .mlbox{background:#1a1d27;color:var(--text);}
+[data-theme="dark"] .fg input,[data-theme="dark"] .mlinput,[data-theme="dark"] .minput,
+[data-theme="dark"] .rinput,[data-theme="dark"] .dpick{
+  background:var(--input-bg);color:var(--text);border-color:var(--border);}
+[data-theme="dark"] .ksec,[data-theme="dark"] .agsec,[data-theme="dark"] .mcard,
+[data-theme="dark"] .scard,[data-theme="dark"] .dbar,[data-theme="dark"] .settings-card,
+[data-theme="dark"] .sync-card,[data-theme="dark"] .report-controls,[data-theme="dark"] .report-table-wrap{
+  background:var(--card);}
+[data-theme="dark"] .nav-tabs{background:var(--card);}
+[data-theme="dark"] .ntab:hover:not(.active){background:var(--bg);}
+[data-theme="dark"] .ilist li,[data-theme="dark"] .user-card{background:var(--bg);}
+[data-theme="dark"] .att-btn{background:var(--card);color:var(--muted);}
+[data-theme="dark"] tr:hover td{background:rgba(255,255,255,.03);}
+[data-theme="dark"] table{color:var(--text);}
+[data-theme="dark"] th{color:var(--muted);border-bottom-color:var(--border);}
+[data-theme="dark"] td{border-bottom-color:var(--border);}
+[data-theme="dark"] .dpill{background:var(--card);color:var(--muted);border-color:var(--border);}
+[data-theme="dark"] .dpill.active{background:var(--primary);color:#fff;}
+[data-theme="dark"] .gtoggle{border-color:var(--border);}
+[data-theme="dark"] .gtoggle button{background:var(--card);color:var(--muted);}
+[data-theme="dark"] .bcnl{background:#2a2f3e;color:var(--muted);}
+[data-theme="dark"] .rsortbtn{background:var(--card);color:var(--muted);border-color:var(--border);}
+[data-theme="dark"] .sync-note{background:var(--bg);}
+[data-theme="dark"] .report-table-wrap table th{background:var(--bg);}
+[data-theme="dark"] .llogo h1{color:var(--primary);}
+[data-theme="dark"] .llogo p{color:var(--muted);}
+
+/* Warm theme */
+[data-theme="warm"]{
+  --bg:#fdf6ec;--card:#fff9f2;--primary:#8b4513;--pri2:#c0712a;
+  --text:#2d1a0a;--muted:#7a5c40;--border:#e8d5bc;
+  --shadow:0 4px 24px rgba(139,69,19,.12);
+  --input-bg:#fff;
+}
+[data-theme="warm"] header{background:linear-gradient(135deg,#8b4513 0%,#c0712a 100%)!important;}
+[data-theme="warm"] .kheader{background:linear-gradient(135deg,#8b4513,#c0712a)!important;}
+[data-theme="warm"] .lcard .llogo .icon,[data-theme="warm"] .lbtn{background:linear-gradient(135deg,#8b4513,#c0712a)!important;}
+[data-theme="warm"] #login-screen{background:linear-gradient(135deg,#8b4513 0%,#c0712a 50%,#d4945a 100%)!important;}
+[data-theme="warm"] .ntab.active,[data-theme="warm"] .dpill.active{background:var(--primary)!important;}
+[data-theme="warm"] .mbtn.add,[data-theme="warm"] .addbtn{background:var(--primary)!important;}
+
+/* Forest theme */
+[data-theme="forest"]{
+  --bg:#f0f7f0;--card:#fff;--primary:#1b5e20;--pri2:#388e3c;
+  --text:#0d2b0d;--muted:#4a7c4a;--border:#c8e6c9;
+  --shadow:0 4px 24px rgba(27,94,32,.12);
+  --input-bg:#fff;
+}
+[data-theme="forest"] header{background:linear-gradient(135deg,#1b5e20 0%,#388e3c 100%)!important;}
+[data-theme="forest"] .kheader{background:linear-gradient(135deg,#1b5e20,#388e3c)!important;}
+[data-theme="forest"] .lcard .llogo .icon,[data-theme="forest"] .lbtn{background:linear-gradient(135deg,#1b5e20,#388e3c)!important;}
+[data-theme="forest"] #login-screen{background:linear-gradient(135deg,#1b5e20 0%,#388e3c 50%,#66bb6a 100%)!important;}
+[data-theme="forest"] .ntab.active,[data-theme="forest"] .dpill.active{background:var(--primary)!important;}
+[data-theme="forest"] .mbtn.add,[data-theme="forest"] .addbtn{background:var(--primary)!important;}
+
+/* Purple theme */
+[data-theme="purple"]{
+  --bg:#f5f0ff;--card:#fff;--primary:#4a148c;--pri2:#7b1fa2;
+  --text:#1a0a2e;--muted:#7c5a9e;--border:#e1d5f0;
+  --shadow:0 4px 24px rgba(74,20,140,.12);
+  --input-bg:#fff;
+}
+[data-theme="purple"] header{background:linear-gradient(135deg,#4a148c 0%,#7b1fa2 100%)!important;}
+[data-theme="purple"] .kheader{background:linear-gradient(135deg,#4a148c,#7b1fa2)!important;}
+[data-theme="purple"] .lcard .llogo .icon,[data-theme="purple"] .lbtn{background:linear-gradient(135deg,#4a148c,#7b1fa2)!important;}
+[data-theme="purple"] #login-screen{background:linear-gradient(135deg,#4a148c 0%,#7b1fa2 50%,#ab47bc 100%)!important;}
+[data-theme="purple"] .ntab.active,[data-theme="purple"] .dpill.active{background:var(--primary)!important;}
+[data-theme="purple"] .mbtn.add,[data-theme="purple"] .addbtn{background:var(--primary)!important;}
+
+/* ── FONT SIZES ── (rem-based so everything scales) */
+html[data-fs="xs"]{font-size:11px;}
+html[data-fs="sm"]{font-size:13px;}
+html[data-fs="md"]{font-size:14px;}
+html[data-fs="lg"]{font-size:16px;}
+html[data-fs="xl"]{font-size:18px;}
+
+/* ── APPEARANCE PANEL ── */
+.ap-panel{position:fixed;top:56px;right:12px;background:var(--card);border:1px solid var(--border);
+  border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.18);padding:16px;width:260px;z-index:200;
+  display:none;animation:apIn .18s ease;}
+.ap-panel.open{display:block;}
+@keyframes apIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.ap-title{font-family:"Nunito",sans-serif;font-size:13px;font-weight:800;color:var(--primary);
+  margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.ap-section{margin-bottom:12px;}
+.ap-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:6px;}
+.theme-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;}
+.theme-dot{width:32px;height:32px;border-radius:8px;cursor:pointer;border:3px solid transparent;
+  transition:all .15s;display:flex;align-items:center;justify-content:center;font-size:13px;}
+.theme-dot:hover{transform:scale(1.1);}
+.theme-dot.active{border-color:var(--text);box-shadow:0 0 0 2px var(--card),0 0 0 4px var(--text);}
+.fs-row{display:flex;gap:4px;align-items:center;}
+.fs-btn{flex:1;padding:6px 2px;border:2px solid var(--border);border-radius:7px;background:var(--card);
+  cursor:pointer;font-family:"Nunito",sans-serif;font-weight:700;color:var(--muted);transition:all .15s;
+  text-align:center;}
+.fs-btn:hover{border-color:var(--pri2);color:var(--primary);}
+.fs-btn.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+.ap-close{width:100%;padding:6px;border:1px solid var(--border);border-radius:7px;background:transparent;
+  color:var(--muted);font-family:inherit;font-size:11px;cursor:pointer;margin-top:4px;}
+.ap-close:hover{background:var(--bg);}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Lato',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* ── LOGIN ── */
+#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#1F4E79 0%,#2E75B6 50%,#9B59B6 100%);position:relative;overflow:hidden;}
+#login-screen::before{content:'';position:absolute;width:600px;height:600px;border-radius:50%;
+  background:rgba(255,255,255,.05);top:-200px;right:-150px;}
+#login-screen::after{content:'';position:absolute;width:400px;height:400px;border-radius:50%;
+  background:rgba(255,255,255,.04);bottom:-100px;left:-100px;}
+.lcard{background:#fff;border-radius:24px;padding:48px 40px;width:100%;max-width:420px;
+  box-shadow:0 24px 80px rgba(0,0,0,.25);position:relative;z-index:1;animation:su .5s ease;}
+@keyframes su{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.llogo{text-align:center;margin-bottom:32px;}
+.llogo .icon{width:72px;height:72px;background:linear-gradient(135deg,#1F4E79,#2E75B6);border-radius:20px;
+  display:inline-flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:12px;
+  box-shadow:0 8px 24px rgba(31,78,121,.3);}
+.llogo h1{font-family:'Nunito',sans-serif;font-size:22px;font-weight:800;color:var(--primary);}
+.llogo p{font-size:13px;color:var(--muted);margin-top:4px;}
+.fg{margin-bottom:20px;}
+.fg label{display:block;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;}
+.fg input{width:100%;padding:13px 16px;border:2px solid var(--border);border-radius:12px;
+  font-family:'Lato',sans-serif;font-size:15px;color:var(--text);transition:border-color .2s;outline:none;}
+.fg input:focus{border-color:var(--pri2);box-shadow:0 0 0 3px rgba(46,117,182,.12);}
+.lbtn{width:100%;padding:15px;background:linear-gradient(135deg,#1F4E79,#2E75B6);color:#fff;border:none;
+  border-radius:12px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;cursor:pointer;
+  transition:transform .2s,box-shadow .2s;margin-top:8px;}
+.lbtn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(31,78,121,.35);}
+.lerr{background:#fff0f0;border:1px solid #ffcccc;color:#c0392b;padding:10px 14px;border-radius:10px;
+  font-size:13px;margin-bottom:16px;display:none;}
+.lhint{margin-top:24px;padding:14px;background:#f8f9ff;border-radius:10px;font-size:12px;color:var(--muted);border:1px solid var(--border);}
+.lhint strong{color:var(--primary);}.lhint .ur{margin-top:6px;}
+
+/* ── APP ── */
+#app-screen{display:none;min-height:100vh;}
+header{background:linear-gradient(135deg,#1F4E79 0%,#2E75B6 100%);padding:0 18px;display:flex;
+  align-items:center;justify-content:space-between;height:52px;
+  box-shadow:0 2px 12px rgba(31,78,121,.25);position:sticky;top:0;z-index:100;}
+.hl{display:flex;align-items:center;gap:10px;}
+.hl .li{font-size:20px;}
+.hdr-title-wrap{display:flex;align-items:center;gap:5px;cursor:pointer;}
+.hdr-title-wrap:hover .edit-title-icon{opacity:1;}
+.hl h2{font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;color:#fff;line-height:1.1;}
+.hl .sub{font-size:11px;color:rgba(255,255,255,.7);display:block;margin-top:1px;}
+.edit-title-icon{font-size:11px;color:rgba(255,255,255,.6);opacity:0;transition:opacity .2s;}
+.hr{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.ubadge{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;
+  padding:4px 10px;border-radius:16px;font-size:11px;font-weight:600;}
+.hbtn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.3);color:#fff;
+  padding:5px 10px;border-radius:16px;font-size:11px;cursor:pointer;transition:background .2s;
+  white-space:nowrap;font-family:inherit;}
+.hbtn:hover{background:rgba(255,255,255,.22);}
+
+/* ── BACK BUTTON ── */
+.back-btn{display:none;align-items:center;gap:4px;background:rgba(255,255,255,.15);
+  border:1px solid rgba(255,255,255,.35);color:#fff;padding:5px 10px;border-radius:16px;
+  font-size:11px;cursor:pointer;transition:all .2s;font-family:inherit;font-weight:700;}
+.back-btn:hover{background:rgba(255,255,255,.3);}
+.back-btn.visible{display:flex;}
+
+.mc{padding:16px;max-width:1300px;margin:0 auto;}
+
+/* TABS */
+.nav-tabs{display:flex;gap:3px;margin-bottom:16px;background:#fff;border-radius:10px;
+  padding:4px;box-shadow:var(--shadow);}
+.ntab{flex:1;padding:7px;border:none;background:transparent;border-radius:8px;
+  font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;transition:all .2s;}
+.ntab.active{background:var(--primary);color:#fff;box-shadow:0 3px 10px rgba(31,78,121,.3);}
+.ntab:hover:not(.active){background:var(--bg);}
+.panel{display:none;}.panel.active{display:block;}
+
+/* DATE BAR */
+.dbar{background:#fff;border-radius:12px;padding:14px 18px;margin-bottom:16px;box-shadow:var(--shadow);}
+.dbar-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+.dbar-top label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.6px;white-space:nowrap;}
+.dins{display:flex;align-items:center;gap:6px;flex:1;flex-wrap:wrap;}
+input[type=date].dpick{padding:7px 10px;border:2px solid var(--border);border-radius:8px;
+  font-family:'Lato',sans-serif;font-size:13px;color:var(--text);outline:none;transition:border-color .2s;}
+input[type=date].dpick:focus{border-color:var(--pri2);}
+.pills{display:flex;gap:6px;flex-wrap:wrap;min-height:30px;}
+.dpill{display:flex;align-items:center;gap:4px;padding:5px 10px;border-radius:16px;
+  border:2px solid var(--border);background:#fff;font-size:12px;font-weight:600;
+  cursor:pointer;transition:all .2s;color:var(--muted);white-space:nowrap;}
+.dpill:hover{border-color:var(--pri2);color:var(--primary);}
+.dpill.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+.pdel{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;
+  border-radius:50%;background:rgba(0,0,0,.15);font-size:9px;cursor:pointer;transition:background .15s;}
+.dpill.active .pdel{background:rgba(255,255,255,.3);}
+.pdel:hover{background:rgba(229,57,53,.7)!important;color:#fff;}
+.dbar-bot{display:flex;justify-content:flex-end;padding-top:10px;border-top:1px solid var(--border);margin-top:8px;gap:6px;}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:16px;}
+.scard{background:#fff;border-radius:10px;padding:12px 14px;box-shadow:var(--shadow);
+  border-top:3px solid #1F4E79;transition:transform .2s;}
+.scard:hover{transform:translateY(-2px);}
+.scard h3{font-family:'Nunito',sans-serif;font-size:11px;font-weight:800;color:var(--primary);margin-bottom:4px;}
+.scard .snum{font-family:'Nunito',sans-serif;font-size:28px;font-weight:900;line-height:1;color:var(--primary);}
+.scard .sdetail{font-size:10px;color:var(--muted);}
+.prog{width:100%;height:4px;background:var(--border);border-radius:3px;margin-top:8px;overflow:hidden;}
+.progfill{height:100%;border-radius:3px;background:var(--primary);transition:width .5s ease;}
+.gender-mini{display:flex;gap:8px;margin-top:4px;font-size:10px;}
+.gm{color:var(--male);font-weight:700;}.gf{color:var(--female);font-weight:700;}
+
+/* KAMPUNG */
+.ksec{background:#fff;border-radius:12px;box-shadow:var(--shadow);margin-bottom:14px;overflow:hidden;}
+.kheader{padding:12px 18px;display:flex;align-items:center;gap:10px;
+  background:linear-gradient(135deg,#1F4E79,#2E75B6);cursor:pointer;user-select:none;}
+.ktitle{font-family:'Nunito',sans-serif;font-weight:900;font-size:15px;color:#fff;}
+.ksub{font-size:11px;color:rgba(255,255,255,.75);margin-top:1px;}
+.ktog{margin-left:auto;font-size:15px;color:rgba(255,255,255,.8);transition:transform .2s;}
+.ktog.open{transform:rotate(180deg);}
+.kbody{padding:10px 14px 14px;}
+.kedit-btn{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.4);color:#fff;
+  padding:3px 8px;border-radius:6px;font-size:11px;font-family:inherit;font-weight:700;cursor:pointer;
+  transition:all .2s;margin-left:6px;white-space:nowrap;}
+.kedit-btn:hover{background:rgba(255,255,255,.32);}
+
+/* AGE GROUP */
+.agsec{border-radius:10px;margin-bottom:8px;overflow:hidden;border:2px solid var(--border);}
+.agheader{padding:8px 12px;display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;}
+.agtitle{font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;}
+.agbadge{font-size:10px;padding:2px 8px;border-radius:8px;font-weight:700;margin-left:4px;}
+.agtog{margin-left:auto;font-size:12px;color:var(--muted);transition:transform .2s;}
+.agtog.open{transform:rotate(180deg);}
+.agbody{padding:0 10px 10px;}
+.ag0{border-color:#1976d2;}.ag0 .agheader{background:#e3f2fd;}.ag0 .agtitle{color:#1565c0;}.ag0 .agbadge{background:#bbdefb;color:#1565c0;}
+.ag1{border-color:#2e7d32;}.ag1 .agheader{background:#e8f5e9;}.ag1 .agtitle{color:#2e7d32;}.ag1 .agbadge{background:#c8e6c9;color:#2e7d32;}
+.ag2{border-color:#e65100;}.ag2 .agheader{background:#fff3e0;}.ag2 .agtitle{color:#e65100;}.ag2 .agbadge{background:#ffe0b2;color:#e65100;}
+.ag3{border-color:#6a1b9a;}.ag3 .agheader{background:#f3e5f5;}.ag3 .agtitle{color:#6a1b9a;}.ag3 .agbadge{background:#e1bee7;color:#6a1b9a;}
+.ag4{border-color:#c62828;}.ag4 .agheader{background:#ffebee;}.ag4 .agtitle{color:#c62828;}.ag4 .agbadge{background:#ffcdd2;color:#c62828;}
+.ag5{border-color:#00695c;}.ag5 .agheader{background:#e0f2f1;}.ag5 .agtitle{color:#00695c;}.ag5 .agbadge{background:#b2dfdb;color:#00695c;}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;margin-top:4px;}
+th{padding:6px 8px;text-align:center;font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.5px;color:var(--muted);border-bottom:2px solid var(--border);}
+th.left{text-align:left;}th.sortable{cursor:pointer;user-select:none;}
+th.sortable:hover{color:var(--primary);}
+td{padding:6px 8px;border-bottom:1px solid var(--border);font-size:12px;text-align:center;vertical-align:middle;}
+td.left{text-align:left;font-weight:600;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#f8faff;}
+
+/* PHOTO / AVATAR */
+.stu-photo{width:28px;height:28px;border-radius:50%;object-fit:cover;border:2px solid var(--border);}
+.stu-avatar{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;
+  justify-content:center;font-size:11px;font-weight:700;color:#fff;font-family:'Nunito',sans-serif;}
+.stu-avatar.M{background:linear-gradient(135deg,#1976d2,#42a5f5);}
+.stu-avatar.F{background:linear-gradient(135deg,#c2185b,#f06292);}
+.stu-avatar.U{background:linear-gradient(135deg,#546e7a,#90a4ae);}
+.gbadge{display:inline-block;padding:1px 6px;border-radius:6px;font-size:9px;font-weight:700;}
+.gbadge.M{background:#e3f2fd;color:#1565c0;}
+.gbadge.F{background:#fce4ec;color:#c2185b;}
+.agebadge{display:inline-block;padding:1px 6px;border-radius:6px;font-size:9px;font-weight:700;
+  background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;}
+
+/* ATT BTN */
+.att-btn{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;
+  border-radius:50%;border:2px solid var(--border);background:#fff;font-size:11px;font-weight:700;
+  cursor:pointer;transition:all .15s;color:var(--muted);}
+.att-btn:hover{transform:scale(1.1);}
+.att-btn.P{background:var(--present);border-color:var(--present);color:#fff;box-shadow:0 2px 6px rgba(67,160,71,.3);}
+.att-btn.A{background:var(--absent);border-color:var(--absent);color:#fff;box-shadow:0 2px 6px rgba(229,57,53,.3);}
+.totbadge{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11px;font-weight:700;
+  background:var(--border);color:var(--muted);}
+.edit-row-btn{background:none;border:1px solid var(--border);border-radius:5px;padding:2px 6px;
+  font-size:10px;color:var(--muted);cursor:pointer;transition:all .15s;}
+.edit-row-btn:hover{border-color:var(--pri2);color:var(--primary);background:#f0f5ff;}
+
+/* ── CLEAN ATTENDANCE ROWS ── */
+.att-list{display:flex;flex-direction:column;gap:3px;padding:6px 4px;}
+.att-row{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;
+  background:var(--bg);transition:background .12s;}
+.att-row:hover{background:var(--border);}
+.att-row.status-P{background:rgba(67,160,71,.08);}
+.att-row.status-A{background:rgba(229,57,53,.07);}
+[data-theme="dark"] .att-row{background:rgba(255,255,255,.04);}
+[data-theme="dark"] .att-row.status-P{background:rgba(67,160,71,.15);}
+[data-theme="dark"] .att-row.status-A{background:rgba(229,57,53,.12);}
+.att-num{font-size:10px;color:var(--muted);min-width:18px;text-align:right;flex-shrink:0;}
+.att-name{flex:1;font-size:13px;font-weight:600;color:var(--text);}
+.att-meta{display:flex;gap:4px;align-items:center;flex-shrink:0;}
+.att-age{font-size:10px;background:var(--border);color:var(--muted);padding:2px 6px;
+  border-radius:5px;font-weight:600;white-space:nowrap;}
+.att-gender{font-size:10px;padding:2px 6px;border-radius:5px;font-weight:700;white-space:nowrap;}
+.att-gender.M{background:#e3f2fd;color:#1565c0;}
+.att-gender.F{background:#fce4ec;color:#c2185b;}
+[data-theme="dark"] .att-gender.M{background:rgba(25,118,210,.25);color:#90caf9;}
+[data-theme="dark"] .att-gender.F{background:rgba(194,24,91,.25);color:#f48fb1;}
+[data-theme="dark"] .att-age{background:rgba(255,255,255,.1);}
+.att-p-btn{display:inline-flex;align-items:center;justify-content:center;
+  width:64px;height:30px;border-radius:6px;border:2px solid var(--border);
+  background:var(--card);font-size:11px;font-weight:800;cursor:pointer;
+  transition:all .15s;color:var(--muted);flex-shrink:0;font-family:'Nunito',sans-serif;}
+.att-p-btn:hover{border-color:var(--present);color:var(--present);}
+.att-p-btn.P{background:var(--present);border-color:var(--present);color:#fff;
+  box-shadow:0 2px 6px rgba(67,160,71,.3);}
+.att-a-btn{display:inline-flex;align-items:center;justify-content:center;
+  width:64px;height:30px;border-radius:6px;border:2px solid var(--border);
+  background:var(--card);font-size:11px;font-weight:800;cursor:pointer;
+  transition:all .15s;color:var(--muted);flex-shrink:0;font-family:'Nunito',sans-serif;}
+.att-a-btn:hover{border-color:var(--absent);color:var(--absent);}
+.att-a-btn.A{background:var(--absent);border-color:var(--absent);color:#fff;
+  box-shadow:0 2px 6px rgba(229,57,53,.3);}
+
+/* ── LANGUAGE SWITCHER ── */
+.lang-row{display:flex;gap:4px;}
+.lang-btn{flex:1;padding:7px 4px;border:2px solid var(--border);border-radius:8px;
+  background:var(--card);font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;
+  cursor:pointer;transition:all .15s;color:var(--muted);text-align:center;}
+.lang-btn:hover{border-color:var(--pri2);color:var(--primary);}
+.lang-btn.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+
+/* Print: clean list */
+@media print{
+  .att-list{gap:1px;padding:2px 0;}
+  .att-row{padding:4px 6px;border-radius:4px;background:#fff!important;border-bottom:1px solid #eee;}
+  .att-row.status-P{background:#f0fff0!important;}
+  .att-row.status-A{background:#fff5f5!important;}
+  .att-p-btn,.att-a-btn{width:44px;height:22px;font-size:9px;}
+  .att-age,.att-gender{font-size:8px;padding:1px 4px;}
+}
+
+/* MANAGE */
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:700px){.mgrid{grid-template-columns:1fr;}}
+.mcard{background:#fff;border-radius:12px;padding:18px;box-shadow:var(--shadow);}
+.mcard h3{font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--primary);
+  margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.mrow{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;align-items:center;}
+.minput{flex:1;min-width:100px;padding:7px 10px;border:2px solid var(--border);border-radius:8px;
+  font-family:'Lato',sans-serif;font-size:13px;color:var(--text);outline:none;
+  transition:border-color .2s;background:#fff;}
+.minput:focus{border-color:var(--pri2);}
+select.minput{cursor:pointer;}
+.mbtn{padding:7px 14px;border:none;border-radius:8px;font-family:'Nunito',sans-serif;
+  font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.mbtn.add{background:var(--primary);color:#fff;}
+.mbtn.add:hover{background:var(--pri2);}
+.mbtn.del{background:#fff0f0;color:var(--absent);border:1px solid #ffcccc;}
+.mbtn.del:hover{background:#ffcccc;}
+.mbtn.sec{background:#f0f4ff;color:var(--primary);border:1px solid var(--border);}
+.mbtn.sec:hover{background:#dbe4ff;}
+.ilist{list-style:none;display:flex;flex-direction:column;gap:4px;max-height:300px;overflow-y:auto;}
+.ilist li{display:flex;align-items:center;gap:6px;padding:7px 10px;background:var(--bg);border-radius:8px;font-size:12px;}
+.iname{flex:1;font-weight:600;}
+.isub{font-size:10px;color:var(--muted);}
+.cdot{width:10px;height:10px;border-radius:50%;display:inline-block;flex-shrink:0;}
+.cd0{background:#1976d2;}.cd1{background:#2e7d32;}.cd2{background:#e65100;}
+.cd3{background:#6a1b9a;}.cd4{background:#c62828;}.cd5{background:#00695c;}
+.gtoggle{display:inline-flex;border:2px solid var(--border);border-radius:8px;overflow:hidden;}
+.gtoggle button{padding:6px 12px;border:none;background:#fff;font-family:'Nunito',sans-serif;
+  font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;color:var(--muted);}
+.gtoggle button.active.M{background:#e3f2fd;color:#1565c0;}
+.gtoggle button.active.F{background:#fce4ec;color:#c2185b;}
+.photo-placeholder{width:34px;height:34px;border-radius:8px;border:2px dashed var(--border);
+  display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;transition:border-color .2s;}
+.photo-placeholder:hover{border-color:var(--pri2);}
+
+/* BUTTONS */
+.btn-save{padding:7px 16px;background:linear-gradient(135deg,#43a047,#2e7d32);color:#fff;border:none;
+  border-radius:16px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-save:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(67,160,71,.35);}
+.btn-save.saved{background:linear-gradient(135deg,#1565c0,#0d47a1);}
+.addbtn{padding:7px 14px;background:var(--primary);color:#fff;border:none;border-radius:8px;
+  font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;}
+.addbtn:hover{background:var(--pri2);}
+.pdfbtn{padding:7px 16px;background:linear-gradient(135deg,#e53935,#b71c1c);color:#fff;border:none;
+  border-radius:16px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;}
+.pdfbtn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(229,57,53,.35);}
+
+/* REPORT TAB */
+.report-controls{background:#fff;border-radius:12px;padding:14px 18px;margin-bottom:14px;box-shadow:var(--shadow);}
+.report-controls h3{font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--primary);margin-bottom:10px;}
+.rrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.rinput{padding:7px 10px;border:2px solid var(--border);border-radius:8px;font-family:'Lato',sans-serif;
+  font-size:12px;color:var(--text);outline:none;transition:border-color .2s;background:#fff;}
+.rinput:focus{border-color:var(--pri2);}
+.rsortbtn{padding:6px 12px;border:2px solid var(--border);border-radius:8px;background:#fff;
+  font-family:'Nunito',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;color:var(--muted);}
+.rsortbtn.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+.report-table-wrap{background:#fff;border-radius:12px;padding:16px;box-shadow:var(--shadow);overflow-x:auto;}
+.report-table-wrap table th{background:var(--bg);}
+.rank-num{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;
+  border-radius:50%;background:var(--primary);color:#fff;font-size:10px;font-weight:800;}
+.att-rate-bar{display:flex;align-items:center;gap:6px;}
+.att-rate-fill{height:6px;border-radius:3px;background:var(--present);min-width:4px;}
+.att-rate-fill.low{background:var(--absent);}
+.att-rate-fill.mid{background:#f9a825;}
+
+/* MODAL */
+.mlov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;display:flex;align-items:center;
+  justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;}
+.mlov.show{opacity:1;pointer-events:all;}
+.mlbox{background:#fff;border-radius:20px;padding:32px;width:100%;max-width:500px;
+  box-shadow:0 24px 60px rgba(0,0,0,.2);transform:translateY(20px);transition:transform .25s;
+  max-height:90vh;overflow-y:auto;}
+.mlov.show .mlbox{transform:translateY(0);}
+.mlbox h3{font-family:'Nunito',sans-serif;font-size:18px;font-weight:800;color:var(--primary);margin-bottom:14px;}
+.ml-lbl{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.8px;margin:14px 0 6px;}
+.mlinput{width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:10px;
+  font-family:'Lato',sans-serif;font-size:14px;color:var(--text);outline:none;
+  transition:border-color .2s;background:#fff;}
+.mlinput:focus{border-color:var(--pri2);}
+.mlfoot{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;}
+.bcnl{padding:10px 20px;background:#f5f5f5;color:var(--muted);border:none;border-radius:10px;
+  font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;cursor:pointer;}
+.bcnl:hover{background:#e0e0e0;}
+
+/* SYNC CARD */
+.sync-card{background:#fff;border-radius:12px;padding:18px;box-shadow:var(--shadow);grid-column:1/-1;}
+.sync-card h3{font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--primary);margin-bottom:10px;}
+.sync-row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-start;}
+.syncbtn{padding:7px 14px;border:none;border-radius:8px;font-family:'Nunito',sans-serif;
+  font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;color:#fff;}
+.syncbtn.export{background:linear-gradient(135deg,#2e7d32,#43a047);}
+.syncbtn.export:hover{transform:translateY(-1px);}
+.syncbtn.import{background:linear-gradient(135deg,#1565c0,#1976d2);}
+.syncbtn.import:hover{transform:translateY(-1px);}
+.syncbtn.att-exp{background:linear-gradient(135deg,#6a1b9a,#9c27b0);}
+.syncbtn.att-exp:hover{transform:translateY(-1px);}
+.sync-note{width:100%;font-size:11px;color:var(--muted);background:var(--bg);
+  padding:8px 12px;border-radius:6px;line-height:1.6;margin-top:4px;}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;right:28px;background:#1a1a2e;color:#fff;padding:13px 18px;
+  border-radius:12px;font-size:14px;font-weight:600;z-index:9999;
+  transform:translateY(80px);opacity:0;transition:all .35s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 8px 30px rgba(0,0,0,.25);}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.ok{border-left:4px solid var(--present);}
+.toast.er{border-left:4px solid var(--absent);}
+.empty-state{text-align:center;padding:48px 20px;color:var(--muted);}
+.empty-state .emo{font-size:52px;margin-bottom:12px;}
+@media(max-width:600px){.mc{padding:12px;}.hl .sub{display:none;}}
+
+/* SETTINGS CARD */
+.settings-card{background:#fff;border-radius:12px;padding:18px;box-shadow:var(--shadow);
+  grid-column:1/-1;border-left:4px solid var(--pri2);}
+.settings-card h3{font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--primary);margin-bottom:12px;}
+
+/* MIGRATE BANNER */
+.migrate-card{background:linear-gradient(135deg,#fffbeb,#fef9c3);border:2px solid #f59e0b;
+  border-radius:12px;padding:14px 18px;box-shadow:var(--shadow);grid-column:1/-1;}
+.migrate-card h3{font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:#92400e;margin-bottom:8px;}
+
+/* USER MANAGEMENT */
+.user-role-badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;}
+.user-role-badge.admin{background:#fff0e0;color:#c2410c;border:1px solid #fed7aa;}
+.user-role-badge.teacher{background:#e0f2fe;color:#0369a1;border:1px solid #bae6fd;}
+.user-card{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--bg);border-radius:9px;font-size:12px;margin-bottom:4px;}
+.user-card-name{flex:1;font-weight:700;}
+.user-card-id{font-size:11px;color:var(--muted);}
+.cpw-banner{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:9px;padding:10px 14px;margin-top:10px;font-size:12px;color:#166534;}
+
+/* ── PRINT / PDF ── */
+/* ── PRINT DIALOG ── */
+.print-panel{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:600;display:flex;
+  align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;}
+.print-panel.open{opacity:1;pointer-events:all;}
+.print-box{background:var(--card);border-radius:16px;padding:24px;width:100%;max-width:480px;
+  box-shadow:0 24px 60px rgba(0,0,0,.3);transform:translateY(20px);transition:transform .25s;
+  max-height:90vh;overflow-y:auto;}
+.print-panel.open .print-box{transform:translateY(0);}
+.print-box h3{font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;color:var(--primary);
+  margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.print-section{margin-bottom:14px;}
+.print-section-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;
+  color:var(--muted);margin-bottom:7px;}
+.print-opts{display:flex;gap:6px;flex-wrap:wrap;}
+.print-opt{padding:7px 12px;border:2px solid var(--border);border-radius:8px;background:var(--card);
+  font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;cursor:pointer;
+  transition:all .15s;color:var(--muted);}
+.print-opt:hover{border-color:var(--pri2);color:var(--primary);}
+.print-opt.sel{background:var(--primary);border-color:var(--primary);color:#fff;}
+.print-preview-info{background:var(--bg);border-radius:8px;padding:10px 12px;
+  font-size:11px;color:var(--muted);margin-top:10px;line-height:1.7;}
+.print-preview-info strong{color:var(--text);}
+.print-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;
+  padding-top:14px;border-top:1px solid var(--border);}
+/* Auto-save indicator */
+.autosave-badge{position:fixed;bottom:20px;left:20px;background:var(--card);border:1px solid var(--border);
+  border-radius:20px;padding:5px 12px;font-size:11px;font-weight:600;color:var(--muted);
+  box-shadow:0 2px 8px rgba(0,0,0,.1);z-index:400;display:flex;align-items:center;gap:5px;
+  opacity:0;transition:opacity .4s;}
+.autosave-badge.show{opacity:1;}
+.autosave-dot{width:7px;height:7px;border-radius:50%;background:#ccc;flex-shrink:0;}
+.autosave-dot.saving{background:#f59e0b;animation:pulse .6s infinite;}
+.autosave-dot.saved{background:#43a047;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── PRINT MEDIA ── */
+@media print{
+  body{background:#fff!important;}
+  header,.nav-tabs,.dbar,.dbar-bot,.addbtn,.btn-save,.pdfbtn,.hbtn,
+  .ubadge,.pdel,.edit-row-btn,.back-btn,.kedit-btn,.print-panel,.ap-panel,
+  #panel-manage,#panel-report,.stats-row,.mlov,.toast,.autosave-badge{display:none!important;}
+  #app-screen,#panel-att{display:block!important;}
+  .ksec{box-shadow:none!important;border:1px solid #ccc;margin-bottom:10px;break-inside:avoid;}
+  .kheader{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .agheader{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .print-header{display:block!important;text-align:center;padding:10px 0 16px;
+    font-family:'Nunito',sans-serif;font-size:18px;font-weight:800;color:#1F4E79;}
+  .print-sub{display:block!important;text-align:center;font-size:12px;color:#555;margin-top:2px;}
+}
+/* Paper sizes via class on body */
+@media print{
+  body.ps-a4 *{} /* default */
+  body.ps-a5{font-size:10px!important;}
+  body.ps-letter{}
+  body.ps-legal{}
+}
+@page{size:A4;margin:15mm;}
+body.ps-a5 @page{size:A5;margin:10mm;}
+body.ps-letter @page{size:letter;margin:15mm;}
+body.ps-legal @page{size:legal;margin:15mm;}
+/* Orientation */
+body.po-landscape @page{size:landscape;}
+/* B&W mode */
+body.pbw .kheader,.kheader{background:#1F4E79!important;}
+@media print{
+  body.pbw .kheader{background:#333!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  body.pbw .agheader{background:#f0f0f0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  body.pbw .att-btn.P{background:#333!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  body.pbw .att-btn.A{background:#999!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  body.pbw *{color:#000!important;}
+}
+/* Font sizes in print */
+@media print{
+  body.pf-sm table{font-size:9px!important;}
+  body.pf-sm th,body.pf-sm td{padding:3px 5px!important;}
+  body.pf-md table{font-size:11px!important;}
+  body.pf-md th,body.pf-md td{padding:5px 7px!important;}
+  body.pf-lg table{font-size:13px!important;}
+  body.pf-lg th,body.pf-lg td{padding:7px 9px!important;}
+}
+.print-header{display:none;}
+.print-sub{display:none;}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══ -->
+<div id="login-screen">
+  <div class="lcard">
+    <div class="llogo">
+      <div class="icon">⛪</div>
+      <h1 id="login-title">Sunday School Attendance</h1>
+      <p>Attendance Management System</p>
+    </div>
+    <div class="lerr" id="lerr">❌ Invalid User ID or Password.</div>
+    <div class="fg"><label>User ID</label>
+      <input type="text" id="uid" placeholder="Enter user ID" autocomplete="username"></div>
+    <div class="fg"><label>Password</label>
+      <input type="password" id="pwd" placeholder="Enter password" autocomplete="current-password"></div>
+    <button class="lbtn" onclick="doLogin()">Sign In →</button>
+  </div>
+</div>
+
+<!-- ══ APP ══ -->
+<div id="app-screen">
+  <header>
+    <div class="hl">
+      <span class="li">⛪</span>
+      <div class="hdr-title-wrap" onclick="openEditTitleModal()" title="Click to rename">
+        <div>
+          <h2 id="app-title-display">Sunday Class</h2>
+          <span class="sub" id="hdate">–</span>
+        </div>
+        <span class="edit-title-icon">✏️</span>
+      </div>
+    </div>
+    <div class="hr">
+      <button class="back-btn" id="back-btn" onclick="goBack()">← Back</button>
+      <span class="ubadge" id="ubadge">👤 –</span>
+      <button class="hbtn" onclick="toggleAppearance()" title="Appearance" id="ap-btn">🎨</button>
+      <button class="hbtn" onclick="doLogout()">Sign Out</button>
+    </div>
+  </header>
+
+  <div class="mc">
+    <div class="print-header" id="print-title">Sunday Class — Attendance Report</div>
+    <div class="print-sub" id="print-sub"></div>
+
+    <div class="nav-tabs">
+      <button class="ntab active" id="tab-att"    onclick="switchTab('att')">📋 Attendance</button>
+      <button class="ntab"        id="tab-report" onclick="switchTab('report')">📊 Reports</button>
+      <button class="ntab"        id="tab-manage" onclick="switchTab('manage')">⚙️ Manage</button>
+    </div>
+
+    <!-- ══ ATTENDANCE ══ -->
+    <div class="panel active" id="panel-att">
+      <div class="dbar">
+        <div class="dbar-top">
+          <label>📅 Class Date</label>
+          <div class="dins">
+            <input type="date" class="dpick" id="dpicker">
+            <button class="addbtn" onclick="addDate()">＋ Add Date</button>
+          </div>
+        </div>
+        <div class="pills" id="date-pills"></div>
+        <div class="dbar-bot">
+          <span style="font-size:10px;color:var(--muted);display:flex;align-items:center;gap:4px;margin-right:auto">
+            <span id="autosave-next" style="cursor:pointer" onclick="showAutoSaveStatus()" title="Click to see last save time">⏱ Auto-saves every 5 min</span>
+          </span>
+          <button class="pdfbtn" onclick="openPrintPanel('att')">🖨️ Print / PDF</button>
+          <button class="btn-save" id="save-btn" onclick="saveAll()">💾 Save Now</button>
+        </div>
+      </div>
+      <div class="stats-row" id="stats-row"></div>
+      <div id="att-container"></div>
+    </div>
+
+    <!-- ══ REPORTS ══ -->
+    <div class="panel" id="panel-report">
+      <div class="report-controls">
+        <h3>📊 Student Report — Full Year Summary</h3>
+        <div class="rrow">
+          <select class="rinput" id="rep-kampung" onchange="renderReport()"><option value="">All Kampungs</option></select>
+          <select class="rinput" id="rep-group" onchange="renderReport()"><option value="">All Age Groups</option></select>
+          <select class="rinput" id="rep-gender" onchange="renderReport()">
+            <option value="">All Genders</option>
+            <option value="M">♂ Male</option>
+            <option value="F">♀ Female</option>
+          </select>
+          <input class="rinput" id="rep-search" type="text" placeholder="🔍 Search name…" oninput="renderReport()">
+        </div>
+        <div class="rrow" style="margin-top:10px">
+          <span style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px">Sort by:</span>
+          <button class="rsortbtn active" id="rsort-name"  onclick="setRepSort('name')">A–Z Name</button>
+          <button class="rsortbtn"        id="rsort-age"   onclick="setRepSort('age')">Age</button>
+          <button class="rsortbtn"        id="rsort-att"   onclick="setRepSort('att')">Attendance</button>
+          <button class="rsortbtn"        id="rsort-group" onclick="setRepSort('group')">Group</button>
+          <button class="pdfbtn" style="margin-left:auto;font-size:12px;padding:8px 16px" onclick="openPrintPanel('report')">🖨️ Print Report</button>
+        </div>
+      </div>
+      <div class="report-table-wrap" id="report-wrap"></div>
+    </div>
+
+    <!-- ══ MANAGE ══ -->
+    <div class="panel" id="panel-manage">
+      <div class="mgrid">
+
+        <!-- App Settings -->
+        <div class="settings-card">
+          <h3>⚙️ App Settings — Church / School Name</h3>
+          <div class="mrow">
+            <input class="minput" id="setting-title" placeholder="e.g. St. Joseph Sunday Class" style="max-width:360px">
+            <button class="mbtn add" onclick="saveAppTitle()">💾 Save Name</button>
+          </div>
+          <p style="font-size:12px;color:var(--muted)">This name appears in the header, on the login screen and on printed reports. You can also click the title in the header to rename it.</p>
+          <hr style="border:none;border-top:1px solid var(--border);margin:18px 0">
+          <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
+            <div style="flex:1;min-width:220px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:14px">
+              <div style="font-size:13px;font-weight:700;color:#c2410c;margin-bottom:4px">🧹 Remove Empty Kampungs</div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Deletes only kampungs that have <strong>0 students</strong>. Your real kampungs (Lanchang, Kabang, etc.) with students are kept safe.</div>
+              <button class="mbtn" style="flex-shrink:0;padding:8px 16px;background:#ea580c;color:#fff;font-size:12px" onclick="removeEmptyKampungs()">🧹 Remove Empty Kampungs</button>
+            </div>
+            <div style="flex:1;min-width:220px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:14px">
+              <div style="font-size:13px;font-weight:700;color:#166534;margin-bottom:4px">🔄 Restore Master Data</div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Reloads all original students from the CSV data baked into this file. Attendance records are kept.</div>
+              <button class="mbtn" style="flex-shrink:0;padding:8px 16px;font-size:12px;background:#16a34a;color:#fff" onclick="resetToMaster()">🔄 Restore Students</button>
+            </div>
+            <div style="flex:1;min-width:220px;background:#fff0f0;border:1px solid #ffcccc;border-radius:10px;padding:14px">
+              <div style="font-size:13px;font-weight:700;color:#b91c1c;margin-bottom:4px">⚠️ Clear Everything</div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Removes <strong>all</strong> kampungs, students and attendance records. Use only to start completely fresh.</div>
+              <button class="mbtn del" style="flex-shrink:0;padding:8px 16px;font-size:12px" onclick="clearAllData()">🗑️ Clear All Data</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- User Management (admin only) -->
+        <div class="settings-card" id="users-card" style="border-left-color:#c2410c;display:none">
+          <h3>👤 User Management <span style="font-size:11px;font-weight:500;color:var(--muted);margin-left:6px">Admin only</span></h3>
+
+          <!-- Add new user -->
+          <div style="background:#f8f9ff;border:1px solid var(--border);border-radius:9px;padding:12px;margin-bottom:12px">
+            <div style="font-size:12px;font-weight:700;color:var(--primary);margin-bottom:8px">➕ Add New User</div>
+            <div class="mrow" style="flex-wrap:wrap;gap:6px">
+              <input class="minput" id="nu-id" placeholder="User ID (e.g. teacher2)" style="max-width:160px">
+              <input class="minput" id="nu-name" placeholder="Display name" style="max-width:160px">
+              <input class="minput" type="password" id="nu-pw" placeholder="Password" style="max-width:140px">
+              <select class="minput" id="nu-role" style="max-width:130px">
+                <option value="teacher">Teacher</option>
+                <option value="admin">Admin</option>
+              </select>
+              <button class="mbtn add" onclick="addUser()">＋ Add User</button>
+            </div>
+          </div>
+
+          <!-- User list -->
+          <div id="user-list"></div>
+
+          <!-- Change own password -->
+          <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:9px;padding:12px;margin-top:10px">
+            <div style="font-size:12px;font-weight:700;color:#166534;margin-bottom:8px">🔑 Change Your Own Password</div>
+            <div class="mrow" style="flex-wrap:wrap;gap:6px">
+              <input class="minput" type="password" id="cpw-old" placeholder="Current password" style="max-width:160px">
+              <input class="minput" type="password" id="cpw-new" placeholder="New password" style="max-width:160px">
+              <input class="minput" type="password" id="cpw-new2" placeholder="Confirm new password" style="max-width:160px">
+              <button class="mbtn add" style="background:#16a34a" onclick="changeOwnPassword()">💾 Update Password</button>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Migration card -->
+        <div class="migrate-card" id="migrate-card">
+          <h3>🔄 Migrate from Previous Version</h3>
+          <p style="font-size:13px;color:#78350f;margin-bottom:12px">
+            Used an older version of this app in this browser? Click below to automatically import all your saved students, kampungs, dates and attendance records.
+          </p>
+          <button style="padding:10px 20px;background:linear-gradient(135deg,#d97706,#b45309);color:#fff;
+            border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;"
+            id="migrate-btn" onclick="migrateFromOld()">⬆️ Import from Previous Version</button>
+          <div id="migrate-status" style="font-size:12px;color:#92400e;margin-top:8px;display:none"></div>
+        </div>
+
+        <!-- Kampungs -->
+        <div class="mcard">
+          <h3>🏘️ Kampungs (Villages)</h3>
+          <div class="mrow">
+            <input class="minput" id="new-k" placeholder="e.g. Kampung Indah">
+            <button class="mbtn add" onclick="addKampung()">＋ Add</button>
+          </div>
+          <ul class="ilist" id="k-list"></ul>
+        </div>
+
+        <!-- Age Groups -->
+        <div class="mcard">
+          <h3>👥 Age Groups</h3>
+          <div class="mrow">
+            <input class="minput" id="new-ag" placeholder="e.g. Kids (Age 4-7)">
+            <button class="mbtn add" onclick="addAgeGroup()">＋ Add</button>
+          </div>
+          <ul class="ilist" id="ag-list"></ul>
+        </div>
+
+        <!-- Students -->
+        <div class="mcard" style="grid-column:1/-1">
+          <h3>🧒 Students <span style="font-size:12px;font-weight:500;color:var(--muted)">(sorted A–Z automatically)</span></h3>
+          <div class="mrow" style="margin-bottom:14px;padding-bottom:14px;border-bottom:2px solid var(--border);flex-wrap:wrap;gap:8px;">
+            <select class="minput" id="stu-k" style="min-width:150px;flex:0 1 auto"><option value="">— Kampung —</option></select>
+            <select class="minput" id="stu-ag" style="min-width:150px;flex:0 1 auto"><option value="">— Age Group —</option></select>
+            <input class="minput" id="new-stu" placeholder="Full name" style="min-width:160px">
+            <input class="minput" id="new-age" type="number" min="1" max="99" placeholder="Age" style="max-width:80px;flex:0 1 auto">
+            <div class="gtoggle" id="gender-toggle">
+              <button class="active M" id="gt-m" onclick="setGender('M')">♂ M</button>
+              <button id="gt-f" onclick="setGender('F')">♀ F</button>
+            </div>
+            <label style="cursor:pointer" title="Upload photo">
+              <input type="file" accept="image/*" id="new-stu-photo" style="display:none" onchange="previewNewPhoto(event)">
+              <div id="new-photo-preview" class="photo-placeholder">📷</div>
+            </label>
+            <button class="mbtn add" onclick="addStudent()">＋ Add Student</button>
+          </div>
+          <div class="mrow" style="margin-bottom:10px">
+            <select class="minput" id="filter-k" style="max-width:200px" onchange="renderStudentList()"><option value="">All Kampungs</option></select>
+            <select class="minput" id="filter-ag" style="max-width:200px" onchange="renderStudentList()"><option value="">All Age Groups</option></select>
+          </div>
+          <ul class="ilist" id="stu-list"></ul>
+        </div>
+
+        <!-- Data Export/Import -->
+        <div class="sync-card">
+          <h3>📊 Data Export / Import</h3>
+          <div class="sync-row">
+            <button class="syncbtn export" onclick="exportCSV()">⬇ Export Students (CSV)</button>
+            <label class="syncbtn import" style="cursor:pointer;display:inline-flex;align-items:center">
+              ⬆ Import Students (CSV)
+              <input type="file" accept=".csv,.txt" style="display:none" onchange="importCSV(event)">
+            </label>
+            <button class="syncbtn att-exp" onclick="exportAttendanceCSV()">📋 Export Attendance (CSV)</button>
+            <div class="sync-note">
+              <strong>Export Students</strong> — saves your student list as CSV for editing in Excel or Sheets.<br>
+              <strong>Import Students</strong> — reads CSV back; new students are added, existing ones updated by ID.<br>
+              <strong>Export Attendance</strong> — full P/A report with all dates for every student.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="mlov" id="modal-ov">
+  <div class="mlbox">
+    <h3 id="m-title">Confirm</h3>
+    <p id="m-body" style="font-size:14px;color:var(--muted);line-height:1.6"></p>
+    <div class="mlfoot">
+      <button class="bcnl" onclick="closeModal()">Cancel</button>
+      <button class="mbtn del" id="m-ok">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT TITLE MODAL -->
+<div class="mlov" id="title-modal">
+  <div class="mlbox">
+    <h3>✏️ Edit Church / School Name</h3>
+    <span class="ml-lbl">Name shown in header & reports</span>
+    <input class="mlinput" id="modal-title-input" placeholder="e.g. Sunday Class, St. Joseph Church">
+    <div class="mlfoot">
+      <button class="bcnl" onclick="closeEditTitleModal()">Cancel</button>
+      <button class="mbtn add" onclick="saveAppTitleFromModal()">💾 Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT STUDENT MODAL -->
+<div class="mlov" id="edit-modal">
+  <div class="mlbox">
+    <h3>✏️ Edit Student</h3>
+    <span class="ml-lbl">Full Name</span>
+    <input class="mlinput" id="edit-name" placeholder="Student full name">
+    <span class="ml-lbl">Age (years)</span>
+    <input class="mlinput" id="edit-age" type="number" min="1" max="99" placeholder="e.g. 10">
+    <span class="ml-lbl">Gender</span>
+    <div class="gtoggle" style="margin-top:6px;display:inline-flex">
+      <button id="egt-m" onclick="setEditGender('M')" style="padding:9px 18px">♂ Male</button>
+      <button id="egt-f" onclick="setEditGender('F')" style="padding:9px 18px">♀ Female</button>
+    </div>
+    <span class="ml-lbl">Kampung</span>
+    <select class="mlinput" id="edit-kampung"></select>
+    <span class="ml-lbl">Age Group</span>
+    <select class="mlinput" id="edit-group"></select>
+    <span class="ml-lbl">Photo</span>
+    <div style="display:flex;align-items:center;gap:12px;margin-top:8px">
+      <label style="cursor:pointer">
+        <input type="file" accept="image/*" id="edit-photo-input" style="display:none" onchange="previewEditPhoto(event)">
+        <div id="edit-photo-preview"></div>
+      </label>
+      <button class="bcnl" style="font-size:12px;padding:7px 14px" onclick="clearEditPhoto()">✕ Remove Photo</button>
+    </div>
+    <div class="mlfoot">
+      <button class="bcnl" onclick="closeEditModal()">Cancel</button>
+      <button class="mbtn del" onclick="deleteStuFromModal()" style="margin-right:auto">🗑 Delete</button>
+      <button class="mbtn add" onclick="saveEditStudent()">💾 Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT KAMPUNG MODAL -->
+<div class="mlov" id="edit-k-modal">
+  <div class="mlbox">
+    <h3>✏️ Edit Kampung</h3>
+    <span class="ml-lbl">Kampung Name</span>
+    <input class="mlinput" id="edit-k-name" placeholder="Kampung name">
+    <div class="mlfoot">
+      <button class="bcnl" onclick="closeEditKModal()">Cancel</button>
+      <button class="mbtn del" onclick="deleteKFromModal()" style="margin-right:auto">🗑 Delete</button>
+      <button class="mbtn add" onclick="saveEditKampung()">💾 Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT AGE GROUP MODAL -->
+<div class="mlov" id="edit-ag-modal">
+  <div class="mlbox">
+    <h3>✏️ Edit Age Group</h3>
+    <span class="ml-lbl">Age Group Name</span>
+    <input class="mlinput" id="edit-ag-name" placeholder="Age group name">
+    <div class="mlfoot">
+      <button class="bcnl" onclick="closeEditAGModal()">Cancel</button>
+      <button class="mbtn del" onclick="deleteAGFromModal()" style="margin-right:auto">🗑 Delete</button>
+      <button class="mbtn add" onclick="saveEditAG()">💾 Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT USER MODAL -->
+<div class="mlov" id="edit-user-modal">
+  <div class="mlbox">
+    <h3>✏️ Edit User</h3>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:12px">User ID: <strong id="eu-id-display"></strong></div>
+    <span class="ml-lbl">Display Name</span>
+    <input class="mlinput" id="eu-name" placeholder="Full name">
+    <span class="ml-lbl">New Password <span style="font-weight:400;text-transform:none;letter-spacing:0">(leave blank to keep current)</span></span>
+    <input class="mlinput" type="password" id="eu-pw" placeholder="Enter new password to change">
+    <span class="ml-lbl">Role</span>
+    <select class="mlinput" id="eu-role">
+      <option value="teacher">Teacher</option>
+      <option value="admin">Admin</option>
+    </select>
+    <div class="mlfoot">
+      <button class="bcnl" onclick="closeEditUserModal()">Cancel</button>
+      <button class="mbtn add" onclick="saveEditUser()">💾 Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── APPEARANCE PANEL ── -->
+<div class="ap-panel" id="ap-panel">
+  <div class="ap-title">🎨 Appearance</div>
+
+  <div class="ap-section">
+    <div class="ap-label">Colour Theme</div>
+    <div class="theme-grid">
+      <div class="theme-dot active" data-theme="default" onclick="setTheme('default')"
+        style="background:linear-gradient(135deg,#1F4E79,#2E75B6)" title="Blue (Default)">
+      </div>
+      <div class="theme-dot" data-theme="dark" onclick="setTheme('dark')"
+        style="background:linear-gradient(135deg,#0f1117,#1a1d27);border-color:#4a9eed" title="Dark">
+        <span style="font-size:11px">🌙</span>
+      </div>
+      <div class="theme-dot" data-theme="warm" onclick="setTheme('warm')"
+        style="background:linear-gradient(135deg,#8b4513,#c0712a)" title="Warm Brown">
+      </div>
+      <div class="theme-dot" data-theme="forest" onclick="setTheme('forest')"
+        style="background:linear-gradient(135deg,#1b5e20,#388e3c)" title="Forest Green">
+      </div>
+      <div class="theme-dot" data-theme="purple" onclick="setTheme('purple')"
+        style="background:linear-gradient(135deg,#4a148c,#7b1fa2)" title="Purple">
+      </div>
+    </div>
+    <div id="theme-name" style="font-size:10px;color:var(--muted);margin-top:6px;text-align:center">🔵 Blue (Default)</div>
+  </div>
+
+  <div class="ap-section">
+    <div class="ap-label">Font Size</div>
+    <div class="fs-row">
+      <button class="fs-btn" data-fs="xs" onclick="setFontSize('xs')" title="Extra Small" style="font-size:9px">XS</button>
+      <button class="fs-btn" data-fs="sm" onclick="setFontSize('sm')" title="Small" style="font-size:10px">S</button>
+      <button class="fs-btn active" data-fs="md" onclick="setFontSize('md')" title="Medium (Default)" style="font-size:12px">M</button>
+      <button class="fs-btn" data-fs="lg" onclick="setFontSize('lg')" title="Large" style="font-size:14px">L</button>
+      <button class="fs-btn" data-fs="xl" onclick="setFontSize('xl')" title="Extra Large" style="font-size:16px">XL</button>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-top:4px;padding:0 2px">
+      <span>Smaller</span><span>Larger</span>
+    </div>
+    <div id="fs-desc" style="font-size:10px;color:var(--muted);margin-top:5px;text-align:center">Medium — 14px (Default)</div>
+  </div>
+
+  <div class="ap-section">
+    <div class="ap-label">🌐 Language / Bahasa / 语言</div>
+    <div class="lang-row">
+      <button class="lang-btn active" data-lang="en" onclick="setLang('en')">🇬🇧 English</button>
+      <button class="lang-btn" data-lang="ms" onclick="setLang('ms')">🇲🇾 BM</button>
+      <button class="lang-btn" data-lang="zh" onclick="setLang('zh')">🇨🇳 中文</button>
+    </div>
+    <div id="lang-name" style="font-size:10px;color:var(--muted);margin-top:5px;text-align:center">English</div>
+  </div>
+
+  <button class="ap-close" onclick="toggleAppearance()">✕ Close</button>
+</div>
+
+<!-- ── PRINT DIALOG ── -->
+<div class="print-panel" id="print-panel">
+  <div class="print-box">
+    <h3>🖨️ Print Settings</h3>
+
+    <div class="print-section">
+      <div class="print-section-label">📄 What to Print</div>
+      <div class="print-opts">
+        <button class="print-opt sel" id="po-att" onclick="setPrintOpt('what','att')">📋 Attendance</button>
+        <button class="print-opt" id="po-report" onclick="setPrintOpt('what','report')">📊 Report</button>
+      </div>
+    </div>
+
+    <div class="print-section">
+      <div class="print-section-label">📐 Paper Size</div>
+      <div class="print-opts">
+        <button class="print-opt sel" id="ps-a4" onclick="setPrintOpt('size','a4')">A4 <span style="font-weight:400;font-size:10px">(210×297mm)</span></button>
+        <button class="print-opt" id="ps-a5" onclick="setPrintOpt('size','a5')">A5 <span style="font-weight:400;font-size:10px">(148×210mm)</span></button>
+        <button class="print-opt" id="ps-letter" onclick="setPrintOpt('size','letter')">Letter <span style="font-weight:400;font-size:10px">(US)</span></button>
+        <button class="print-opt" id="ps-legal" onclick="setPrintOpt('size','legal')">Legal <span style="font-weight:400;font-size:10px">(US)</span></button>
+      </div>
+    </div>
+
+    <div class="print-section">
+      <div class="print-section-label">↔️ Orientation</div>
+      <div class="print-opts">
+        <button class="print-opt sel" id="po-portrait" onclick="setPrintOpt('orient','portrait')">▯ Portrait</button>
+        <button class="print-opt" id="po-landscape" onclick="setPrintOpt('orient','landscape')">▭ Landscape</button>
+      </div>
+    </div>
+
+    <div class="print-section">
+      <div class="print-section-label">🎨 Colour Mode</div>
+      <div class="print-opts">
+        <button class="print-opt sel" id="pc-colour" onclick="setPrintOpt('colour','colour')">🌈 Full Colour</button>
+        <button class="print-opt" id="pc-bw" onclick="setPrintOpt('colour','bw')">⬛ Black &amp; White</button>
+      </div>
+    </div>
+
+    <div class="print-section">
+      <div class="print-section-label">🔡 Print Font Size</div>
+      <div class="print-opts">
+        <button class="print-opt" id="pf-sm" onclick="setPrintOpt('font','sm')">Small <span style="font-weight:400;font-size:10px">(more rows/page)</span></button>
+        <button class="print-opt sel" id="pf-md" onclick="setPrintOpt('font','md')">Medium</button>
+        <button class="print-opt" id="pf-lg" onclick="setPrintOpt('font','lg')">Large <span style="font-weight:400;font-size:10px">(easier to read)</span></button>
+      </div>
+    </div>
+
+    <div class="print-preview-info" id="print-preview-info">
+      <strong>Summary:</strong> Attendance · A4 · Portrait · Colour · Medium font<br>
+      <span style="font-size:10px">Works with any printer — Canon, Epson, HP, Brother, and others.<br>
+      Your browser's print dialog will let you choose which printer to use.</span>
+    </div>
+
+    <div class="print-footer">
+      <button class="bcnl" onclick="closePrintPanel()">Cancel</button>
+      <button class="mbtn add" style="gap:6px;display:inline-flex;align-items:center" onclick="executePrint()">
+        🖨️ Open Print Dialog
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- AUTO-SAVE BADGE -->
+<div class="autosave-badge" id="autosave-badge">
+  <div class="autosave-dot" id="autosave-dot"></div>
+  <span id="autosave-text">Auto-saved</span>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══ APPEARANCE — theme & font size (applied before anything else)
+(function(){
+  const t=localStorage.getItem('sca_theme')||'default';
+  const f=localStorage.getItem('sca_fs')||'md';
+  if(t!=='default')document.documentElement.setAttribute('data-theme',t);
+  document.documentElement.setAttribute('data-fs',f);
+})();
+
+// ══ STORAGE
+const SK={k:'sca_k_v7',ag:'sca_ag_v7',stu:'sca_stu_v7',dates:'sca_d_v7',att:'sca_att_v7',title:'sca_title_v7',users:'sca_users_v7'};
+const ld=k=>{try{return JSON.parse(localStorage.getItem(k))||null}catch{return null}};
+const sv=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+
+// ══ USERS — stored in localStorage, seeded with defaults on first run
+const DEFAULT_USERS=[
+  {id:'admin',   password:'admin123',name:'Administrator',role:'admin'},
+  {id:'teacher1',password:'pass1',   name:'Teacher',      role:'teacher'},
+];
+function loadUsers(){
+  try{
+    const stored=ld(SK.users);
+    if(stored&&Array.isArray(stored)&&stored.length>0)return stored;
+  }catch(e){}
+  return JSON.parse(JSON.stringify(DEFAULT_USERS)); // always return a fresh copy of defaults
+}
+function saveUsers(arr){sv(SK.users,arr);}
+let USERS_LIST=loadUsers();
+
+// Helper: look up user by id
+function findUser(id){return USERS_LIST.find(u=>u.id===id)||null;}
+
+// ══ UTILS
+const mkId=()=>'i'+Math.random().toString(36).slice(2,9);
+const isoDate=d=>d.toISOString().split('T')[0];
+const todayISO=()=>isoDate(new Date());
+function nextSundays(n=3){
+  const s=[];let d=new Date();
+  while(s.length<n){if(d.getDay()===0)s.push(isoDate(d));d.setDate(d.getDate()+1);}
+  return s;
+}
+function escHtml(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
+const aKey=(sid,date)=>`${sid}||${date}`;
+const sortByName=arr=>[...arr].sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+
+// ══ STATE  — starts completely empty (no default kampungs)
+let currentUser=null;
+// ── MASTER DATA (pre-loaded from your CSV exports)
+const MASTER_KAMPUNGS = [
+  {
+    "id": "k_lanchang",
+    "name": "Lanchang"
+  },
+  {
+    "id": "k_kabang",
+    "name": "Kabang"
+  }
+];
+const MASTER_GROUPS   = [
+  {
+    "id": "ag_0",
+    "name": "PreSchool (age 5 & below)",
+    "colorIdx": 0
+  },
+  {
+    "id": "ag_1",
+    "name": "Level 1 (age 5-6)",
+    "colorIdx": 1
+  },
+  {
+    "id": "ag_2",
+    "name": "Group (age 4-6)",
+    "colorIdx": 2
+  },
+  {
+    "id": "ag_3",
+    "name": "Level 2 (age 7-9)",
+    "colorIdx": 3
+  },
+  {
+    "id": "ag_4",
+    "name": "Group (age 7-9)",
+    "colorIdx": 4
+  },
+  {
+    "id": "ag_5",
+    "name": "Level 3 (age 10-12)",
+    "colorIdx": 5
+  },
+  {
+    "id": "ag_6",
+    "name": "Group (age 10-12)",
+    "colorIdx": 0
+  },
+  {
+    "id": "ag_7",
+    "name": "Level 24 (age 13-15)",
+    "colorIdx": 1
+  },
+  {
+    "id": "ag_8",
+    "name": "Group (age 13-14)",
+    "colorIdx": 2
+  },
+  {
+    "id": "ag_9",
+    "name": "Belia (age 16-17)",
+    "colorIdx": 3
+  }
+];
+const MASTER_STUDENTS = [
+  {
+    "id": "ivtjqp9",
+    "name": "abay",
+    "kampungId": "k_kabang",
+    "groupId": "ag_4",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "ikgmy84",
+    "name": "ading",
+    "kampungId": "k_kabang",
+    "groupId": "ag_6",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "ijn4c4f",
+    "name": "Adiq",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_0",
+    "gender": "M",
+    "age": 3,
+    "photo": null
+  },
+  {
+    "id": "ivipqoe",
+    "name": "Aikin",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_7",
+    "gender": "M",
+    "age": 15,
+    "photo": null
+  },
+  {
+    "id": "iujeq01",
+    "name": "Akira",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_0",
+    "gender": "M",
+    "age": 3,
+    "photo": null
+  },
+  {
+    "id": "irhnlqj",
+    "name": "Alecia Maisara",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_9",
+    "gender": "M",
+    "age": 17,
+    "photo": null
+  },
+  {
+    "id": "iwh7q4p",
+    "name": "alex",
+    "kampungId": "k_kabang",
+    "groupId": "ag_2",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "ibbzazv",
+    "name": "Alex Ariey",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_1",
+    "gender": "M",
+    "age": 5,
+    "photo": null
+  },
+  {
+    "id": "i5d64nc",
+    "name": "alvin",
+    "kampungId": "k_kabang",
+    "groupId": "ag_2",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "iht2i8z",
+    "name": "andy",
+    "kampungId": "k_kabang",
+    "groupId": "ag_2",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "iln27uo",
+    "name": "angat",
+    "kampungId": "k_kabang",
+    "groupId": "ag_4",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "inxljqg",
+    "name": "atek",
+    "kampungId": "k_kabang",
+    "groupId": "ag_4",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "ipnn0sq",
+    "name": "atek",
+    "kampungId": "k_kabang",
+    "groupId": "ag_6",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "ifh9ceq",
+    "name": "ayel",
+    "kampungId": "k_kabang",
+    "groupId": "ag_2",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "izh9uzv",
+    "name": "Azib Iffat",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_0",
+    "gender": "M",
+    "age": 3,
+    "photo": null
+  },
+  {
+    "id": "ig0qlxy",
+    "name": "Azmur",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_9",
+    "gender": "M",
+    "age": 16,
+    "photo": null
+  },
+  {
+    "id": "i391f0d",
+    "name": "Bah Agei",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_7",
+    "gender": "M",
+    "age": 14,
+    "photo": null
+  },
+  {
+    "id": "ilf49qm",
+    "name": "bah sah",
+    "kampungId": "k_kabang",
+    "groupId": "ag_6",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "i6zxqfi",
+    "name": "bebo",
+    "kampungId": "k_kabang",
+    "groupId": "ag_8",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "iqtc06b",
+    "name": "bito",
+    "kampungId": "k_kabang",
+    "groupId": "ag_4",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "ichdr8i",
+    "name": "bqh sek",
+    "kampungId": "k_kabang",
+    "groupId": "ag_6",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "i4vnget",
+    "name": "cani",
+    "kampungId": "k_kabang",
+    "groupId": "ag_2",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "inzmpil",
+    "name": "Catherine Nancy",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_0",
+    "gender": "M",
+    "age": 3,
+    "photo": null
+  },
+  {
+    "id": "i8zr7l2",
+    "name": "Daniel Alvin",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_5",
+    "gender": "M",
+    "age": 10,
+    "photo": null
+  },
+  {
+    "id": "iujt7ui",
+    "name": "Daniel Freddy",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_5",
+    "gender": "M",
+    "age": 10,
+    "photo": null
+  },
+  {
+    "id": "iqwyb6v",
+    "name": "eden",
+    "kampungId": "k_kabang",
+    "groupId": "ag_6",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "iyarg5e",
+    "name": "Eden",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_1",
+    "gender": "M",
+    "age": 6,
+    "photo": null
+  },
+  {
+    "id": "iyimiek",
+    "name": "elin",
+    "kampungId": "k_kabang",
+    "groupId": "ag_8",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "icrt3or",
+    "name": "era",
+    "kampungId": "k_kabang",
+    "groupId": "ag_8",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "igppdzo",
+    "name": "Eva Grace",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_1",
+    "gender": "M",
+    "age": 6,
+    "photo": null
+  },
+  {
+    "id": "igfhgcs",
+    "name": "Evelyn",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_7",
+    "gender": "F",
+    "age": 13,
+    "photo": null
+  },
+  {
+    "id": "i9b1a52",
+    "name": "Gloria Irish",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_0",
+    "gender": "M",
+    "age": 3,
+    "photo": null
+  },
+  {
+    "id": "ifvlobx",
+    "name": "gulek",
+    "kampungId": "k_kabang",
+    "groupId": "ag_8",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "ioinblz",
+    "name": "Harry Rayyan",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_7",
+    "gender": "M",
+    "age": 14,
+    "photo": null
+  },
+  {
+    "id": "ivtuw9j",
+    "name": "iki",
+    "kampungId": "k_kabang",
+    "groupId": "ag_2",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "ixkdy00",
+    "name": "intan",
+    "kampungId": "k_kabang",
+    "groupId": "ag_4",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "icx3civ",
+    "name": "izat",
+    "kampungId": "k_kabang",
+    "groupId": "ag_4",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "isdxtqh",
+    "name": "izat",
+    "kampungId": "k_kabang",
+    "groupId": "ag_6",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "iq9aere",
+    "name": "Jacqueline Risa",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_1",
+    "gender": "M",
+    "age": 6,
+    "photo": null
+  },
+  {
+    "id": "ioezky4",
+    "name": "Jasuanis",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_9",
+    "gender": "M",
+    "age": 16,
+    "photo": null
+  },
+  {
+    "id": "ij25ww2",
+    "name": "Jessica Vanessa",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_3",
+    "gender": "M",
+    "age": 7,
+    "photo": null
+  },
+  {
+    "id": "i0mylwl",
+    "name": "joe",
+    "kampungId": "k_kabang",
+    "groupId": "ag_6",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "ioizx6t",
+    "name": "Joelnes",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_3",
+    "gender": "M",
+    "age": 7,
+    "photo": null
+  },
+  {
+    "id": "ivgaemc",
+    "name": "Joshua",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_7",
+    "gender": "M",
+    "age": 14,
+    "photo": null
+  },
+  {
+    "id": "ioth0rg",
+    "name": "joyi",
+    "kampungId": "k_kabang",
+    "groupId": "ag_4",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "ivb144c",
+    "name": "Kamisah",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_9",
+    "gender": "M",
+    "age": 17,
+    "photo": null
+  },
+  {
+    "id": "idwl4rf",
+    "name": "kantol",
+    "kampungId": "k_kabang",
+    "groupId": "ag_8",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "iuxu9fi",
+    "name": "Kayriesmaviana",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_3",
+    "gender": "M",
+    "age": 7,
+    "photo": null
+  },
+  {
+    "id": "iemk5x1",
+    "name": "kipo",
+    "kampungId": "k_kabang",
+    "groupId": "ag_6",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "iq0yxzr",
+    "name": "Krismariana",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_9",
+    "gender": "M",
+    "age": 17,
+    "photo": null
+  },
+  {
+    "id": "iy5t7r5",
+    "name": "Laura Mellisa",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_5",
+    "gender": "M",
+    "age": 10,
+    "photo": null
+  },
+  {
+    "id": "ixpwmzk",
+    "name": "Lisa Suriani",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_9",
+    "gender": "M",
+    "age": 17,
+    "photo": null
+  },
+  {
+    "id": "imwlj8u",
+    "name": "Mariana",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_1",
+    "gender": "M",
+    "age": 6,
+    "photo": null
+  },
+  {
+    "id": "iwaqmkd",
+    "name": "mimi",
+    "kampungId": "k_kabang",
+    "groupId": "ag_4",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "i6ceepp",
+    "name": "Nur Aerina",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_5",
+    "gender": "F",
+    "age": 12,
+    "photo": null
+  },
+  {
+    "id": "ik4s12h",
+    "name": "Nur Aezlina",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_5",
+    "gender": "F",
+    "age": 10,
+    "photo": null
+  },
+  {
+    "id": "iuasmns",
+    "name": "pura",
+    "kampungId": "k_kabang",
+    "groupId": "ag_6",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "inqxxkx",
+    "name": "Qis Airianna",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_1",
+    "gender": "M",
+    "age": 6,
+    "photo": null
+  },
+  {
+    "id": "ir7flj2",
+    "name": "queni",
+    "kampungId": "k_kabang",
+    "groupId": "ag_2",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "igijy4v",
+    "name": "Roharafify",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_7",
+    "gender": "M",
+    "age": 15,
+    "photo": null
+  },
+  {
+    "id": "idmk2ac",
+    "name": "Ross Tiara",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_9",
+    "gender": "M",
+    "age": 16,
+    "photo": null
+  },
+  {
+    "id": "irdk5fu",
+    "name": "Ruth Marvella",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_3",
+    "gender": "M",
+    "age": 8,
+    "photo": null
+  },
+  {
+    "id": "ipq5nxv",
+    "name": "safik",
+    "kampungId": "k_kabang",
+    "groupId": "ag_2",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "ia6vpys",
+    "name": "Samuel",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_3",
+    "gender": "M",
+    "age": 9,
+    "photo": null
+  },
+  {
+    "id": "i415c01",
+    "name": "sasi",
+    "kampungId": "k_kabang",
+    "groupId": "ag_6",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "ihl67ly",
+    "name": "Satilla Vina",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_1",
+    "gender": "M",
+    "age": 6,
+    "photo": null
+  },
+  {
+    "id": "ibgxom3",
+    "name": "sayang",
+    "kampungId": "k_kabang",
+    "groupId": "ag_4",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "i8embiu",
+    "name": "seri",
+    "kampungId": "k_kabang",
+    "groupId": "ag_2",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "i31t5gt",
+    "name": "Siti Norhanita",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_5",
+    "gender": "F",
+    "age": 12,
+    "photo": null
+  },
+  {
+    "id": "ix5w4ez",
+    "name": "Susida Nafira",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_3",
+    "gender": "M",
+    "age": 7,
+    "photo": null
+  },
+  {
+    "id": "io6ghqs",
+    "name": "syamim",
+    "kampungId": "k_kabang",
+    "groupId": "ag_2",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "ik2affd",
+    "name": "tante",
+    "kampungId": "k_kabang",
+    "groupId": "ag_6",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "igj5jz6",
+    "name": "tery",
+    "kampungId": "k_kabang",
+    "groupId": "ag_4",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "ixei6xu",
+    "name": "Tirza",
+    "kampungId": "k_lanchang",
+    "groupId": "ag_5",
+    "gender": "M",
+    "age": 12,
+    "photo": null
+  },
+  {
+    "id": "iiozlde",
+    "name": "tiuc",
+    "kampungId": "k_kabang",
+    "groupId": "ag_8",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  },
+  {
+    "id": "ia5xztv",
+    "name": "tocan",
+    "kampungId": "k_kabang",
+    "groupId": "ag_6",
+    "gender": "M",
+    "age": null,
+    "photo": null
+  }
+];
+const MASTER_DATES    = [
+  "2026-03-01",
+  "2026-03-07",
+  "2026-03-08",
+  "2026-03-15",
+  "2026-03-22",
+  "2026-05-09",
+  "2026-07-11",
+  "2026-11-07",
+  "2026-12-13"
+];
+const MASTER_ATT      = {};
+
+let KAMPUNGS   = ld(SK.k)    || JSON.parse(JSON.stringify(MASTER_KAMPUNGS));
+let AGE_GROUPS = ld(SK.ag)   || JSON.parse(JSON.stringify(MASTER_GROUPS));
+let STUDENTS   = ld(SK.stu)  || JSON.parse(JSON.stringify(MASTER_STUDENTS));
+let DATES      = ld(SK.dates)|| JSON.parse(JSON.stringify(MASTER_DATES));
+let ATT        = ld(SK.att)  || JSON.parse(JSON.stringify(MASTER_ATT));
+let APP_TITLE  = ld(SK.title)|| 'Sunday School Attendance';
+let curDate    = DATES[0]||todayISO();
+let newGender='M',editGender='M';
+let newPhotoB64=null,editPhotoB64=null;
+let editStuId=null,editKId=null,editAGId=null;
+let repSort='name';
+
+// Back-navigation history stack
+let navHistory=[];
+let currentTab='att';
+
+STUDENTS.forEach(s=>{
+  if(!s.gender)s.gender='M';
+  if(s.age===undefined||s.age===null)s.age=null;
+  if(!s.photo)s.photo=null;
+});
+
+const svK  =()=>sv(SK.k,KAMPUNGS);
+const svAG =()=>sv(SK.ag,AGE_GROUPS);
+const svStu=()=>sv(SK.stu,STUDENTS);
+const svD  =()=>sv(SK.dates,DATES);
+const svAtt=()=>sv(SK.att,ATT);
+const svTitle=()=>sv(SK.title,APP_TITLE);
+
+// ══ APP TITLE
+function applyTitle(){
+  const t=APP_TITLE||'Sunday Class';
+  document.getElementById('app-title-display').textContent=t;
+  document.getElementById('login-title').textContent=t;
+  document.title=t+' — Attendance';
+}
+function saveAppTitle(){
+  const v=document.getElementById('setting-title').value.trim();
+  if(!v){showToast('⚠️ Enter a name.','er');return;}
+  APP_TITLE=v;svTitle();applyTitle();showToast('✅ Name saved!');
+}
+function openEditTitleModal(){
+  document.getElementById('modal-title-input').value=APP_TITLE;
+  document.getElementById('title-modal').classList.add('show');
+  setTimeout(()=>document.getElementById('modal-title-input').focus(),100);
+}
+function closeEditTitleModal(){document.getElementById('title-modal').classList.remove('show');}
+function saveAppTitleFromModal(){
+  const v=document.getElementById('modal-title-input').value.trim();
+  if(!v){showToast('⚠️ Enter a name.','er');return;}
+  APP_TITLE=v;svTitle();applyTitle();
+  document.getElementById('setting-title').value=v;
+  closeEditTitleModal();showToast('✅ Name saved!');
+}
+
+// ══ AUTH
+function doLogin(){
+  const id=(document.getElementById('uid').value||'').trim();
+  const pw=(document.getElementById('pwd').value||'');
+  if(!id||!pw){
+    document.getElementById('lerr').style.display='block';
+    return;
+  }
+  try{USERS_LIST=loadUsers();}catch(e){USERS_LIST=DEFAULT_USERS;}
+  const u=findUser(id);
+  if(u&&u.password===pw){
+    currentUser={...u};
+    try{sessionStorage.setItem('sca_session',id);}catch(e){}
+    document.getElementById('lerr').style.display='none';
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app-screen').style.display='block';
+    document.getElementById('ubadge').textContent='👤 '+u.name;
+    initApp();
+  } else {
+    document.getElementById('lerr').style.display='block';
+    document.getElementById('pwd').value='';
+    document.getElementById('uid').select();
+  }
+}
+document.getElementById('pwd').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+document.getElementById('uid').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('pwd').focus();});
+function doLogout(){
+  currentUser=null;navHistory=[];currentTab='att';
+  sessionStorage.removeItem('sca_session'); // clear saved session
+  if(_autoSaveTimer){clearInterval(_autoSaveTimer);_autoSaveTimer=null;}
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('app-screen').style.display='none';
+  updateBackBtn();
+}
+
+// ══ BACK NAVIGATION
+const TAB_LABELS={att:'📋 Attendance',report:'📊 Reports',manage:'⚙️ Manage'};
+function updateBackBtn(){
+  const btn=document.getElementById('back-btn');
+  if(navHistory.length>0){
+    const prev=navHistory[navHistory.length-1];
+    btn.textContent='← '+TAB_LABELS[prev];
+    btn.classList.add('visible');
+  } else {
+    btn.classList.remove('visible');
+  }
+}
+function goBack(){
+  if(!navHistory.length)return;
+  const prev=navHistory.pop();
+  _applyTab(prev);
+}
+
+// ══ INIT
+function initApp(){
+  applyTitle();
+  checkMigrationAvailable();
+  document.getElementById('dpicker').value=todayISO();
+  document.getElementById('setting-title').value=APP_TITLE;
+  navHistory=[];currentTab='att';
+  updateBackBtn();
+  renderDatePills();renderStats();renderAtt();
+  document.getElementById('hdate').textContent=fmtDate(curDate);
+  syncAppearanceUI();
+  applyLang();
+  startAutoSave();
+  // Show next auto-save time hint briefly
+  const badge=document.getElementById('autosave-badge');
+  const dot=document.getElementById('autosave-dot');
+  const txt=document.getElementById('autosave-text');
+  dot.className='autosave-dot saved';
+  txt.textContent=T('autosaveActive');
+  badge.classList.add('show');
+  setTimeout(()=>badge.classList.remove('show'),3000);
+}
+
+function switchTab(t){
+  if(t===currentTab)return;
+  navHistory.push(currentTab);
+  if(navHistory.length>20)navHistory.shift();
+  _applyTab(t);
+}
+function _applyTab(t){
+  currentTab=t;
+  ['att','report','manage'].forEach(x=>{
+    document.getElementById('panel-'+x).classList.toggle('active',x===t);
+    document.getElementById('tab-'+x).classList.toggle('active',x===t);
+  });
+  if(t==='manage'){renderManage();}
+  if(t==='report'){syncRepDropdowns();renderReport();}
+  updateBackBtn();
+}
+
+// ══ DATES
+function fmtDate(k){
+  const [y,m,d]=k.split('-').map(Number);
+  return new Date(y,m-1,d).toLocaleDateString('en-MY',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+}
+function renderDatePills(){
+  const c=document.getElementById('date-pills');c.innerHTML='';
+  if(!DATES.length){c.innerHTML='<span style="font-size:13px;color:var(--muted)">No dates — add one above.</span>';return;}
+  [...DATES].sort().forEach(dk=>{
+    const p=document.createElement('button');p.className='dpill'+(dk===curDate?' active':'');
+    const l=document.createElement('span');l.textContent=fmtDate(dk);p.appendChild(l);
+    const x=document.createElement('span');x.className='pdel';x.textContent='×';
+    x.onclick=e=>{e.stopPropagation();removeDate(dk);};p.appendChild(x);
+    p.onclick=()=>selectDate(dk);c.appendChild(p);
+  });
+}
+function selectDate(k){curDate=k;document.getElementById('hdate').textContent=fmtDate(k);renderDatePills();renderStats();renderAtt();}
+function addDate(){
+  const v=document.getElementById('dpicker').value;
+  if(!v){showToast('⚠️ Pick a date first.','er');return;}
+  if(DATES.includes(v)){selectDate(v);showToast('Already added — selected!','er');return;}
+  DATES.push(v);svD();curDate=v;
+  renderDatePills();renderStats();renderAtt();
+  document.getElementById('hdate').textContent=fmtDate(v);
+  showToast('📅 Date added: '+fmtDate(v));
+}
+function removeDate(k){
+  if(DATES.length<=1){showToast('⚠️ Keep at least one date.','er');return;}
+  DATES=DATES.filter(d=>d!==k);svD();
+  if(curDate===k){curDate=[...DATES].sort()[0];document.getElementById('hdate').textContent=fmtDate(curDate);}
+  renderDatePills();renderStats();renderAtt();
+}
+
+// ══ STATS
+function renderStats(){
+  const c=document.getElementById('stats-row');c.innerHTML='';
+  KAMPUNGS.forEach(k=>{
+    const stus=STUDENTS.filter(s=>s.kampungId===k.id);
+    const present=stus.filter(s=>ATT[aKey(s.id,curDate)]==='P').length;
+    const total=stus.length;
+    const rate=total?Math.round(present/total*100):0;
+    const males=stus.filter(s=>s.gender==='M').length;
+    const females=stus.filter(s=>s.gender==='F').length;
+    c.innerHTML+=`<div class="scard">
+      <h3>🏘️ ${escHtml(k.name)}</h3>
+      <div style="display:flex;align-items:flex-end;gap:12px">
+        <div class="snum">${present}</div>
+        <div class="sdetail"><strong>${total} ${T('students')}</strong><br>${rate}% ${T('presentLabel')}</div>
+      </div>
+      <div class="gender-mini"><span class="gm">♂ ${males}</span><span class="gf">♀ ${females}</span></div>
+      <div class="prog"><div class="progfill" style="width:${rate}%"></div></div>
+    </div>`;
+  });
+}
+
+// ══ AVATARS
+function avatarHtml(stu,size=34){
+  const g=stu.gender||'U';
+  if(stu.photo)return `<img class="stu-photo" src="${stu.photo}" style="width:${size}px;height:${size}px" alt="">`;
+  return `<span class="stu-avatar ${g}" style="width:${size}px;height:${size}px;font-size:${Math.round(size*.38)}px">${(stu.name||'?')[0].toUpperCase()}</span>`;
+}
+
+// ══ ATTENDANCE VIEW
+function renderAtt(){
+  const c=document.getElementById('att-container');c.innerHTML='';
+  if(!KAMPUNGS.length){
+    c.innerHTML=`<div class="empty-state"><div class="emo">🏘️</div><p>No kampungs yet.<br>Go to <strong>⚙️ Manage</strong> to add your kampungs, age groups and students.</p></div>`;return;
+  }
+  KAMPUNGS.forEach(kmp=>{
+    const kStudents=sortByName(STUDENTS.filter(s=>s.kampungId===kmp.id));
+    const kPresent=kStudents.filter(s=>ATT[aKey(s.id,curDate)]==='P').length;
+    const sec=document.createElement('div');sec.className='ksec';
+    const hdr=document.createElement('div');hdr.className='kheader';
+    hdr.innerHTML=`<span style="font-size:20px">🏘️</span>
+      <div style="flex:1"><div class="ktitle">${escHtml(kmp.name)}</div>
+      <div class="ksub" id="ksub-${kmp.id}">${kStudents.length} ${T('students')} · ${kPresent} ${T('presentLabel')}</div></div>
+      <span class="ktog open" style="margin-left:8px">▾</span>`;
+    const body=document.createElement('div');body.className='kbody';body.style.padding='10px 12px 14px';
+    const groups=AGE_GROUPS.filter(ag=>kStudents.some(s=>s.groupId===ag.id));
+    if(!groups.length){
+      body.innerHTML=`<p style="font-size:13px;color:var(--muted);padding:6px 0">No students yet — add them in the Manage tab.</p>`;
+    } else {
+      groups.forEach(ag=>{
+        const ci=ag.colorIdx%6;
+        const agStu=sortByName(kStudents.filter(s=>s.groupId===ag.id));
+        const agP=agStu.filter(s=>ATT[aKey(s.id,curDate)]==='P').length;
+        const agsec=document.createElement('div');agsec.className=`agsec ag${ci}`;
+        const aghdr=document.createElement('div');aghdr.className='agheader';
+        aghdr.innerHTML=`<span class="agtitle">${escHtml(ag.name)}</span>
+          <span class="agbadge" id="agbadge-${kmp.id}-${ag.id}">${agP}/${agStu.length} present</span>
+          <span class="agtog open">▾</span>`;
+        const agbody=document.createElement('div');agbody.className='agbody';agbody.style.padding='4px 6px 8px';
+        // ── CLEAN LIST (name + P/A buttons only)
+        const list=document.createElement('div');list.className='att-list';
+        agStu.forEach((stu,i)=>{
+          const k=aKey(stu.id,curDate);
+          const cur=ATT[k]||'-';
+          const row=document.createElement('div');
+          row.className='att-row'+(cur==='P'?' status-P':cur==='A'?' status-A':'');
+          row.dataset.sid=stu.id;row.dataset.kampung=kmp.id;row.dataset.ag=ag.id;
+          const g=stu.gender||'U';
+          const gLabel=g==='M'?T('male'):g==='F'?T('female'):'–';
+          const ageLabel=stu.age?(stu.age+' '+T('yrs')):'–';
+          row.innerHTML=`<span class="att-num">${i+1}</span>
+            <span class="att-name">${escHtml(stu.name)}</span>
+            <span class="att-meta">
+              <span class="att-age">${ageLabel}</span>
+              ${g!=='U'?`<span class="att-gender ${g}">${gLabel}</span>`:''}
+            </span>
+            <button class="att-p-btn${cur==='P'?' P':''}" data-sid="${stu.id}" data-date="${curDate}" data-type="P"
+              onclick="toggleAttClean(this)">${T('present')}</button>
+            <button class="att-a-btn${cur==='A'?' A':''}" data-sid="${stu.id}" data-date="${curDate}" data-type="A"
+              onclick="toggleAttClean(this)">${T('absent')}</button>`;
+          list.appendChild(row);
+        });
+        agbody.appendChild(list);
+        aghdr.onclick=()=>{const tog=aghdr.querySelector('.agtog');const op=tog.classList.toggle('open');agbody.style.display=op?'block':'none';};
+        agsec.appendChild(aghdr);agsec.appendChild(agbody);body.appendChild(agsec);
+      });
+    }
+    hdr.onclick=e=>{
+      const tog=hdr.querySelector('.ktog');const op=tog.classList.toggle('open');body.style.display=op?'block':'none';
+    };
+    sec.appendChild(hdr);sec.appendChild(body);c.appendChild(sec);
+  });
+}
+
+// ══ TOGGLE ATTENDANCE (clean list version)
+function toggleAttClean(btn){
+  const {sid,date,type}=btn.dataset;
+  const k=aKey(sid,date);
+  const cur=ATT[k]||'-';
+  // If clicking same state → clear it; otherwise set new state
+  const nxt=(cur===type)?'-':type;
+  if(nxt==='-')delete ATT[k];else ATT[k]=nxt;
+  // Update row styling
+  const row=btn.closest('.att-row');
+  row.className='att-row'+(nxt==='P'?' status-P':nxt==='A'?' status-A':'');
+  // Update both buttons in this row
+  row.querySelector('.att-p-btn').classList.toggle('P',nxt==='P');
+  row.querySelector('.att-a-btn').classList.toggle('A',nxt==='A');
+  // Update age group badge
+  const agbody=btn.closest('.agbody');
+  const aghdr=agbody.previousElementSibling;
+  const allRows=[...agbody.querySelectorAll('.att-row')];
+  const pCount=allRows.filter(r=>r.classList.contains('status-P')).length;
+  aghdr.querySelector('.agbadge').textContent=`${pCount}/${allRows.length} ${T('presentLabel')}`;
+  // Update kampung subtitle
+  const ksec=btn.closest('.ksec');
+  const kampungId=row.dataset.kampung;
+  if(kampungId){
+    const kSub=document.getElementById('ksub-'+kampungId);
+    if(kSub){
+      const kStudents=STUDENTS.filter(s=>s.kampungId===kampungId);
+      const kPresent=kStudents.filter(s=>ATT[aKey(s.id,curDate)]==='P').length;
+      kSub.textContent=`${kStudents.length} ${T('students')} · ${kPresent} ${T('presentLabel')}`;
+    }
+  }
+  renderStats();
+}
+
+// Legacy toggleAtt kept for compatibility
+function toggleAtt(btn){
+  const {sid,date}=btn.dataset;
+  const k=aKey(sid,date);
+  const cur=ATT[k]||'-';
+  const nxt=cur==='-'?'P':cur==='P'?'A':'-';
+  if(nxt==='-')delete ATT[k];else ATT[k]=nxt;
+  btn.className='att-btn '+nxt;btn.textContent=nxt==='-'?'–':nxt;
+  renderStats();
+}
+
+// ══ SAVE
+function saveAll(silent=false){
+  svAtt();
+  if(!silent){
+    const b=document.getElementById('save-btn');
+    b.textContent='✅ Saved!';b.classList.add('saved');
+    showToast('✅ Attendance saved!');
+    setTimeout(()=>{b.textContent='💾 Save Attendance';b.classList.remove('saved');},2500);
+  }
+}
+
+// ══ AUTO-SAVE (every 5 minutes)
+let _autoSaveTimer=null;
+let _lastAutoSave=null;
+function startAutoSave(){
+  if(_autoSaveTimer)clearInterval(_autoSaveTimer);
+  _autoSaveTimer=setInterval(()=>{
+    doAutoSave();
+  },5*60*1000); // 5 minutes
+}
+function doAutoSave(){
+  const badge=document.getElementById('autosave-badge');
+  const dot=document.getElementById('autosave-dot');
+  const txt=document.getElementById('autosave-text');
+  // Show "saving..."
+  dot.className='autosave-dot saving';
+  txt.textContent='Saving…';
+  badge.classList.add('show');
+  setTimeout(()=>{
+    svAtt();
+    _lastAutoSave=new Date();
+    dot.className='autosave-dot saved';
+    const t=_lastAutoSave.toLocaleTimeString('en-MY',{hour:'2-digit',minute:'2-digit'});
+    txt.textContent=T('autosaveText')+' '+t;
+    // hide after 4s
+    setTimeout(()=>badge.classList.remove('show'),4000);
+  },600);
+}
+function showAutoSaveStatus(){
+  const badge=document.getElementById('autosave-badge');
+  const dot=document.getElementById('autosave-dot');
+  const txt=document.getElementById('autosave-text');
+  if(_lastAutoSave){
+    const t=_lastAutoSave.toLocaleTimeString('en-MY',{hour:'2-digit',minute:'2-digit'});
+    dot.className='autosave-dot saved';
+    txt.textContent=T('lastSavedAt')+' '+t;
+  } else {
+    dot.className='autosave-dot';
+    txt.textContent=T('autoSave');
+  }
+  badge.classList.add('show');
+  setTimeout(()=>badge.classList.remove('show'),3000);
+}
+
+// ══ PRINT DIALOG
+let _printOpts={what:'att',size:'a4',orient:'portrait',colour:'colour',font:'md'};
+const PRINT_SIZE_LABELS={a4:'A4 (210×297mm)',a5:'A5 (148×210mm)',letter:'Letter (US)',legal:'Legal (US)'};
+const PRINT_ORIENT_LABELS={portrait:'Portrait',landscape:'Landscape'};
+
+function openPrintPanel(what){
+  _printOpts.what=what||'att';
+  // Sync button states
+  ['att','report'].forEach(v=>{
+    document.getElementById('po-'+v).classList.toggle('sel',_printOpts.what===v);
+  });
+  updatePrintPreview();
+  document.getElementById('print-panel').classList.add('open');
+}
+function closePrintPanel(){
+  document.getElementById('print-panel').classList.remove('open');
+}
+function setPrintOpt(key,val){
+  _printOpts[key]=val;
+  // Update button states for this group
+  const groupMap={what:['att','report'],size:['a4','a5','letter','legal'],
+    orient:['portrait','landscape'],colour:['colour','bw'],font:['sm','md','lg']};
+  const prefixMap={what:'po-',size:'ps-',orient:'po-',colour:'pc-',font:'pf-'};
+  const group=groupMap[key];
+  const prefix=prefixMap[key];
+  if(group&&prefix){
+    group.forEach(v=>{
+      const el=document.getElementById(prefix+v);
+      if(el)el.classList.toggle('sel',v===val);
+    });
+  }
+  updatePrintPreview();
+}
+function updatePrintPreview(){
+  const {what,size,orient,colour,font}=_printOpts;
+  const whatLabel=what==='att'?'Attendance':'Student Report';
+  const sizeLabel=PRINT_SIZE_LABELS[size]||size.toUpperCase();
+  const orientLabel=PRINT_ORIENT_LABELS[orient]||orient;
+  const colourLabel=colour==='bw'?'Black & White':'Full Colour';
+  const fontLabel=font==='sm'?'Small':font==='lg'?'Large':'Medium';
+  document.getElementById('print-preview-info').innerHTML=
+    `<strong>Summary:</strong> ${whatLabel} · ${sizeLabel} · ${orientLabel} · ${colourLabel} · ${fontLabel} font<br>
+    <span style="font-size:10px">Works with all printers (Canon, Epson, HP, Brother, etc.).<br>
+    Your browser will open a print dialog — choose your printer there.</span>`;
+}
+function executePrint(){
+  const {what,size,orient,colour,font}=_printOpts;
+  // Apply body classes for print CSS rules
+  document.body.className='';
+  document.body.classList.add('ps-'+size);
+  if(orient==='landscape')document.body.classList.add('po-landscape');
+  if(colour==='bw')document.body.classList.add('pbw');
+  document.body.classList.add('pf-'+font);
+
+  // Set page title
+  if(what==='att'){
+    document.getElementById('print-title').textContent=`${APP_TITLE} — Attendance: ${fmtDate(curDate)}`;
+    document.getElementById('print-sub').textContent=`Printed: ${new Date().toLocaleDateString('en-MY',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}`;
+    // Ensure att panel visible
+    ['att','manage','report'].forEach(p=>document.getElementById('panel-'+p).classList.remove('active'));
+    document.getElementById('panel-att').classList.add('active');
+  } else {
+    document.getElementById('print-title').textContent=`${APP_TITLE} — Student Attendance Report`;
+    document.getElementById('print-sub').textContent=`Printed: ${new Date().toLocaleDateString('en-MY',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}`;
+    // Make report panel temporarily visible for printing
+    ['att','manage'].forEach(p=>{document.getElementById('panel-'+p).style.display='none';});
+    document.getElementById('panel-report').style.display='block';
+  }
+
+  closePrintPanel();
+  setTimeout(()=>{
+    window.print();
+    // Restore after print
+    setTimeout(()=>{
+      document.body.className='';
+      ['att','manage','report'].forEach(p=>document.getElementById('panel-'+p).style.display='');
+      document.getElementById('panel-'+currentTab).classList.add('active');
+      document.getElementById('panel-'+currentTab).style.display='';
+    },500);
+  },150);
+}
+// Close print panel on backdrop click
+document.getElementById('print-panel').addEventListener('click',function(e){
+  if(e.target===this)closePrintPanel();
+});
+
+// ══ REPORTS
+function syncRepDropdowns(){
+  const rk=document.getElementById('rep-kampung');const rkv=rk.value;
+  rk.innerHTML='<option value="">All Kampungs</option>';
+  KAMPUNGS.forEach(k=>rk.innerHTML+=`<option value="${k.id}"${k.id===rkv?' selected':''}>${escHtml(k.name)}</option>`);
+  const rg=document.getElementById('rep-group');const rgv=rg.value;
+  rg.innerHTML='<option value="">All Age Groups</option>';
+  AGE_GROUPS.forEach(g=>rg.innerHTML+=`<option value="${g.id}"${g.id===rgv?' selected':''}>${escHtml(g.name)}</option>`);
+}
+function setRepSort(s){
+  repSort=s;
+  ['name','age','att','group'].forEach(x=>document.getElementById('rsort-'+x).classList.toggle('active',x===s));
+  renderReport();
+}
+function renderReport(){
+  const wrap=document.getElementById('report-wrap');
+  const kidF=document.getElementById('rep-kampung').value;
+  const agidF=document.getElementById('rep-group').value;
+  const gF=document.getElementById('rep-gender').value;
+  const srch=(document.getElementById('rep-search').value||'').toLowerCase();
+  let stus=[...STUDENTS];
+  if(kidF)stus=stus.filter(s=>s.kampungId===kidF);
+  if(agidF)stus=stus.filter(s=>s.groupId===agidF);
+  if(gF)stus=stus.filter(s=>s.gender===gF);
+  if(srch)stus=stus.filter(s=>(s.name||'').toLowerCase().includes(srch));
+  stus=stus.map(s=>{
+    const tot=DATES.filter(d=>ATT[aKey(s.id,d)]==='P').length;
+    const rate=DATES.length?Math.round(tot/DATES.length*100):0;
+    return {...s,attTotal:tot,attRate:rate};
+  });
+  if(repSort==='name')stus.sort((a,b)=>a.name.localeCompare(b.name));
+  else if(repSort==='age')stus.sort((a,b)=>(b.age||0)-(a.age||0));
+  else if(repSort==='att')stus.sort((a,b)=>b.attTotal-a.attTotal);
+  else if(repSort==='group')stus.sort((a,b)=>{
+    const ga=AGE_GROUPS.findIndex(g=>g.id===a.groupId);
+    const gb=AGE_GROUPS.findIndex(g=>g.id===b.groupId);
+    return ga-gb||a.name.localeCompare(b.name);
+  });
+  if(!stus.length){wrap.innerHTML='<div class="empty-state"><div class="emo">🔍</div><p>No students match the filter.</p></div>';return;}
+  let html=`<table><thead><tr>
+    <th>#</th><th></th>
+    <th class="left sortable" onclick="setRepSort('name')">Name ${repSort==='name'?'▲':''}</th>
+    <th class="sortable" onclick="setRepSort('age')">Age ${repSort==='age'?'▲':''}</th>
+    <th>Gender</th><th>Kampung</th>
+    <th class="sortable" onclick="setRepSort('group')">Group ${repSort==='group'?'▲':''}</th>
+    <th class="sortable" onclick="setRepSort('att')">Sessions ✓ ${repSort==='att'?'▲':''}</th>
+    <th>Rate %</th><th></th>
+  </tr></thead><tbody>`;
+  stus.forEach((s,i)=>{
+    const k=KAMPUNGS.find(x=>x.id===s.kampungId);
+    const ag=AGE_GROUPS.find(x=>x.id===s.groupId);
+    const g=s.gender||'U';
+    const gLabel=g==='M'?'♂ M':g==='F'?'♀ F':'–';
+    const barClass=s.attRate>=75?'':s.attRate>=50?'mid':'low';
+    html+=`<tr>
+      <td><span class="rank-num">${i+1}</span></td>
+      <td>${avatarHtml(s,30)}</td>
+      <td class="left">${escHtml(s.name)}</td>
+      <td><span class="agebadge">${s.age?s.age+' yrs':'–'}</span></td>
+      <td><span class="gbadge ${g}">${gLabel}</span></td>
+      <td style="font-size:12px">${k?escHtml(k.name):'–'}</td>
+      <td style="font-size:12px">${ag?escHtml(ag.name):'–'}</td>
+      <td><strong>${s.attTotal}</strong><span style="color:var(--muted);font-size:11px"> / ${DATES.length}</span></td>
+      <td><div class="att-rate-bar">
+        <div class="att-rate-fill ${barClass}" style="width:${Math.max(s.attRate,4)}px"></div>
+        <span style="font-size:12px;font-weight:700">${s.attRate}%</span>
+      </div></td>
+      <td><button class="edit-row-btn" onclick="openEditModal('${s.id}')">✏️</button></td>
+    </tr>`;
+  });
+  html+=`</tbody></table>
+    <div style="padding:12px 0 4px;font-size:12px;color:var(--muted)">
+      Showing <strong>${stus.length}</strong> students · <strong>${DATES.length}</strong> class dates recorded
+    </div>`;
+  wrap.innerHTML=html;
+}
+
+// ══ GENDER
+function setGender(g){newGender=g;document.getElementById('gt-m').className=g==='M'?'active M':'';document.getElementById('gt-f').className=g==='F'?'active F':'';}
+function setEditGender(g){editGender=g;document.getElementById('egt-m').className=g==='M'?'active M':'';document.getElementById('egt-f').className=g==='F'?'active F':'';}
+
+// ══ PHOTO
+function previewNewPhoto(e){
+  const file=e.target.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    newPhotoB64=ev.target.result;
+    const p=document.getElementById('new-photo-preview');
+    p.innerHTML='';p.style.cssText='';
+    const img=document.createElement('img');
+    img.src=newPhotoB64;img.style.cssText='width:40px;height:40px;border-radius:10px;object-fit:cover;border:2px solid var(--border);display:block;cursor:pointer;';
+    p.appendChild(img);
+  };r.readAsDataURL(file);
+}
+function previewEditPhoto(e){
+  const file=e.target.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=ev=>{editPhotoB64=ev.target.result;renderEditPhotoPreview();};
+  r.readAsDataURL(file);
+}
+function renderEditPhotoPreview(){
+  const p=document.getElementById('edit-photo-preview');
+  if(editPhotoB64){
+    p.innerHTML=`<img src="${editPhotoB64}" style="width:52px;height:52px;border-radius:12px;object-fit:cover;border:2px solid var(--border);cursor:pointer;display:block">`;
+  } else {
+    p.innerHTML=`<div class="photo-placeholder" style="width:52px;height:52px;font-size:22px">📷</div>`;
+  }
+}
+function clearEditPhoto(){editPhotoB64=null;renderEditPhotoPreview();}
+
+// ══ MANAGE
+function renderManage(){
+  renderKList();renderAGList();syncManageDropdowns();syncFilterDropdowns();
+  document.getElementById('setting-title').value=APP_TITLE;
+  // Show user management only for admins
+  const uc=document.getElementById('users-card');
+  if(currentUser&&currentUser.role==='admin'){uc.style.display='';renderUserList();}
+  else{uc.style.display='none';}
+}
+
+// ══ USER MANAGEMENT
+function renderUserList(){
+  USERS_LIST=loadUsers();
+  const el=document.getElementById('user-list');
+  el.innerHTML='';
+  USERS_LIST.forEach(u=>{
+    const isMe=currentUser&&u.id===currentUser.id;
+    const div=document.createElement('div');div.className='user-card';
+    div.innerHTML=`<span style="font-size:18px">${u.role==='admin'?'🔐':'👤'}</span>
+      <span class="user-card-name">${escHtml(u.name)}</span>
+      <span class="user-card-id">${escHtml(u.id)}</span>
+      <span class="user-role-badge ${u.role}">${u.role==='admin'?'Admin':'Teacher'}</span>
+      ${isMe?'<span style="font-size:10px;color:var(--muted)">(you)</span>':''}
+      <button class="mbtn sec" style="padding:4px 8px;font-size:11px" onclick="openEditUserModal('${escHtml(u.id)}')">✏️ Edit</button>
+      ${!isMe&&!(u.role==='admin'&&USERS_LIST.filter(x=>x.role==='admin').length<=1)?
+        `<button class="mbtn del" style="padding:4px 8px;font-size:11px" onclick="deleteUser('${escHtml(u.id)}')">🗑</button>`:''}`;
+    el.appendChild(div);
+  });
+}
+
+function addUser(){
+  const id=document.getElementById('nu-id').value.trim().replace(/\s+/g,'');
+  const name=document.getElementById('nu-name').value.trim();
+  const pw=document.getElementById('nu-pw').value;
+  const role=document.getElementById('nu-role').value;
+  if(!id||!name||!pw){showToast('⚠️ Fill in all fields.','er');return;}
+  USERS_LIST=loadUsers();
+  if(findUser(id)){showToast('⚠️ User ID already exists.','er');return;}
+  USERS_LIST.push({id,name,password:pw,role});
+  saveUsers(USERS_LIST);
+  document.getElementById('nu-id').value='';
+  document.getElementById('nu-name').value='';
+  document.getElementById('nu-pw').value='';
+  renderUserList();showToast('✅ User added: '+name);
+}
+
+function deleteUser(id){
+  USERS_LIST=loadUsers();
+  const u=findUser(id);if(!u)return;
+  const admins=USERS_LIST.filter(x=>x.role==='admin');
+  if(u.role==='admin'&&admins.length<=1){showToast('⚠️ Cannot delete the only admin.','er');return;}
+  openModal('Delete User','Delete user <strong>'+escHtml(u.name)+'</strong> ('+escHtml(u.id)+')? This cannot be undone.',()=>{
+    USERS_LIST=USERS_LIST.filter(x=>x.id!==id);
+    saveUsers(USERS_LIST);renderUserList();showToast('✅ User deleted.');
+  });
+  setTimeout(()=>{const ok=document.getElementById('m-ok');if(ok){ok.textContent='Yes, Delete';ok.className='mbtn del';}},10);
+}
+
+let editUserId=null;
+function openEditUserModal(id){
+  USERS_LIST=loadUsers();
+  const u=findUser(id);if(!u)return;
+  editUserId=id;
+  document.getElementById('eu-id-display').textContent=u.id;
+  document.getElementById('eu-name').value=u.name;
+  document.getElementById('eu-pw').value='';
+  document.getElementById('eu-role').value=u.role;
+  // Lock role if only admin
+  const admins=USERS_LIST.filter(x=>x.role==='admin');
+  document.getElementById('eu-role').disabled=(u.role==='admin'&&admins.length<=1);
+  document.getElementById('edit-user-modal').classList.add('show');
+}
+function closeEditUserModal(){document.getElementById('edit-user-modal').classList.remove('show');editUserId=null;}
+function saveEditUser(){
+  if(!editUserId)return;
+  USERS_LIST=loadUsers();
+  const idx=USERS_LIST.findIndex(u=>u.id===editUserId);if(idx<0)return;
+  const name=document.getElementById('eu-name').value.trim();
+  const pw=document.getElementById('eu-pw').value;
+  const role=document.getElementById('eu-role').value;
+  if(!name){showToast('⚠️ Name cannot be empty.','er');return;}
+  USERS_LIST[idx].name=name;
+  USERS_LIST[idx].role=role;
+  if(pw)USERS_LIST[idx].password=pw;
+  saveUsers(USERS_LIST);
+  // Update current session if editing self
+  if(currentUser&&currentUser.id===editUserId){currentUser.name=name;currentUser.role=role;
+    document.getElementById('ubadge').textContent='👤 '+name;}
+  closeEditUserModal();renderUserList();showToast('✅ User updated!');
+}
+
+function changeOwnPassword(){
+  const oldPw=document.getElementById('cpw-old').value;
+  const newPw=document.getElementById('cpw-new').value;
+  const newPw2=document.getElementById('cpw-new2').value;
+  if(!oldPw||!newPw||!newPw2){showToast('⚠️ Fill in all fields.','er');return;}
+  if(newPw!==newPw2){showToast('⚠️ New passwords do not match.','er');return;}
+  if(newPw.length<4){showToast('⚠️ Password must be at least 4 characters.','er');return;}
+  USERS_LIST=loadUsers();
+  const idx=USERS_LIST.findIndex(u=>u.id===currentUser.id);
+  if(idx<0||USERS_LIST[idx].password!==oldPw){showToast('⚠️ Current password is wrong.','er');return;}
+  USERS_LIST[idx].password=newPw;
+  saveUsers(USERS_LIST);
+  document.getElementById('cpw-old').value='';
+  document.getElementById('cpw-new').value='';
+  document.getElementById('cpw-new2').value='';
+  showToast('✅ Password changed successfully!');
+}
+
+// KAMPUNGS
+function renderKList(){
+  const ul=document.getElementById('k-list');ul.innerHTML='';
+  if(!KAMPUNGS.length){ul.innerHTML='<li style="color:var(--muted);font-size:13px;padding:8px">No kampungs yet — add one above.</li>';return;}
+  KAMPUNGS.forEach(k=>{
+    const cnt=STUDENTS.filter(s=>s.kampungId===k.id).length;
+    const li=document.createElement('li');
+    li.innerHTML=`<span style="font-size:18px">🏘️</span>
+      <span class="iname">${escHtml(k.name)}</span>
+      <span class="isub">${cnt} student${cnt!==1?'s':''}</span>
+      <button class="mbtn sec" style="padding:5px 10px;font-size:12px;flex-shrink:0" onclick="openEditKModal('${k.id}')">✏️ Edit</button>`;
+    ul.appendChild(li);
+  });
+}
+function addKampung(){
+  const n=document.getElementById('new-k').value.trim();
+  if(!n){showToast('⚠️ Enter kampung name.','er');return;}
+  if(KAMPUNGS.find(k=>k.name===n)){showToast('⚠️ Already exists.','er');return;}
+  KAMPUNGS.push({id:mkId(),name:n});svK();
+  document.getElementById('new-k').value='';
+  renderManage();renderStats();renderAtt();showToast('✅ Kampung "'+n+'" added.');
+}
+function openEditKModal(kid){
+  editKId=kid;
+  const k=KAMPUNGS.find(x=>x.id===kid);if(!k)return;
+  document.getElementById('edit-k-name').value=k.name;
+  document.getElementById('edit-k-modal').classList.add('show');
+  setTimeout(()=>document.getElementById('edit-k-name').focus(),100);
+}
+function closeEditKModal(){document.getElementById('edit-k-modal').classList.remove('show');editKId=null;}
+function saveEditKampung(){
+  const n=document.getElementById('edit-k-name').value.trim();
+  if(!n){showToast('⚠️ Enter a name.','er');return;}
+  const idx=KAMPUNGS.findIndex(k=>k.id===editKId);if(idx===-1)return;
+  KAMPUNGS[idx].name=n;svK();closeEditKModal();
+  renderManage();renderStats();renderAtt();showToast('✅ Kampung renamed.');
+}
+function deleteKFromModal(){
+  const k=KAMPUNGS.find(x=>x.id===editKId);if(!k)return;
+  const cnt=STUDENTS.filter(s=>s.kampungId===editKId).length;
+  closeEditKModal();
+  openModal('Delete Kampung',`Delete "<strong>${escHtml(k.name)}</strong>" and its ${cnt} student(s)?`,()=>{
+    KAMPUNGS=KAMPUNGS.filter(x=>x.id!==editKId);
+    STUDENTS=STUDENTS.filter(s=>s.kampungId!==editKId);
+    svK();svStu();renderManage();renderStats();renderAtt();showToast('🗑️ Kampung deleted.');
+  });
+}
+
+// AGE GROUPS
+function renderAGList(){
+  const ul=document.getElementById('ag-list');ul.innerHTML='';
+  if(!AGE_GROUPS.length){ul.innerHTML='<li style="color:var(--muted);font-size:13px;padding:8px">No age groups yet — add one above.</li>';return;}
+  AGE_GROUPS.forEach(ag=>{
+    const ci=ag.colorIdx%6;
+    const cnt=STUDENTS.filter(s=>s.groupId===ag.id).length;
+    const li=document.createElement('li');
+    li.innerHTML=`<span class="cdot cd${ci}"></span>
+      <span class="iname">${escHtml(ag.name)}</span>
+      <span class="isub">${cnt} student${cnt!==1?'s':''}</span>
+      <button class="mbtn sec" style="padding:5px 10px;font-size:12px;flex-shrink:0" onclick="openEditAGModal('${ag.id}')">✏️ Edit</button>`;
+    ul.appendChild(li);
+  });
+}
+function addAgeGroup(){
+  const n=document.getElementById('new-ag').value.trim();
+  if(!n){showToast('⚠️ Enter group name.','er');return;}
+  if(AGE_GROUPS.find(g=>g.name===n)){showToast('⚠️ Already exists.','er');return;}
+  const used=AGE_GROUPS.map(g=>g.colorIdx%6);
+  const ci=[0,1,2,3,4,5].find(c=>!used.includes(c))??AGE_GROUPS.length%6;
+  AGE_GROUPS.push({id:mkId(),name:n,colorIdx:ci});svAG();
+  document.getElementById('new-ag').value='';
+  renderManage();renderAtt();showToast('✅ Age group "'+n+'" added.');
+}
+function openEditAGModal(agid){
+  editAGId=agid;
+  const ag=AGE_GROUPS.find(x=>x.id===agid);if(!ag)return;
+  document.getElementById('edit-ag-name').value=ag.name;
+  document.getElementById('edit-ag-modal').classList.add('show');
+  setTimeout(()=>document.getElementById('edit-ag-name').focus(),100);
+}
+function closeEditAGModal(){document.getElementById('edit-ag-modal').classList.remove('show');editAGId=null;}
+function saveEditAG(){
+  const n=document.getElementById('edit-ag-name').value.trim();
+  if(!n){showToast('⚠️ Enter a name.','er');return;}
+  const idx=AGE_GROUPS.findIndex(g=>g.id===editAGId);if(idx===-1)return;
+  AGE_GROUPS[idx].name=n;svAG();closeEditAGModal();
+  renderManage();renderAtt();showToast('✅ Age group updated.');
+}
+function deleteAGFromModal(){
+  const ag=AGE_GROUPS.find(x=>x.id===editAGId);if(!ag)return;
+  const cnt=STUDENTS.filter(s=>s.groupId===editAGId).length;
+  closeEditAGModal();
+  openModal('Delete Age Group',`Delete "<strong>${escHtml(ag.name)}</strong>" and its ${cnt} student(s)?`,()=>{
+    AGE_GROUPS=AGE_GROUPS.filter(x=>x.id!==editAGId);
+    STUDENTS=STUDENTS.filter(s=>s.groupId!==editAGId);
+    svAG();svStu();renderManage();renderStats();renderAtt();showToast('🗑️ Age group deleted.');
+  });
+}
+
+// STUDENTS
+function syncManageDropdowns(){
+  const ks=document.getElementById('stu-k');const kc=ks.value;
+  ks.innerHTML='<option value="">— Kampung —</option>';
+  KAMPUNGS.forEach(k=>ks.innerHTML+=`<option value="${k.id}"${k.id===kc?' selected':''}>${escHtml(k.name)}</option>`);
+  const ags=document.getElementById('stu-ag');const agc=ags.value;
+  ags.innerHTML='<option value="">— Age Group —</option>';
+  AGE_GROUPS.forEach(g=>ags.innerHTML+=`<option value="${g.id}"${g.id===agc?' selected':''}>${escHtml(g.name)}</option>`);
+}
+function syncFilterDropdowns(){
+  const fk=document.getElementById('filter-k');const fkv=fk.value;
+  fk.innerHTML='<option value="">All Kampungs</option>';
+  KAMPUNGS.forEach(k=>fk.innerHTML+=`<option value="${k.id}"${k.id===fkv?' selected':''}>${escHtml(k.name)}</option>`);
+  const fg=document.getElementById('filter-ag');const fgv=fg.value;
+  fg.innerHTML='<option value="">All Age Groups</option>';
+  AGE_GROUPS.forEach(g=>fg.innerHTML+=`<option value="${g.id}"${g.id===fgv?' selected':''}>${escHtml(g.name)}</option>`);
+  renderStudentList();
+}
+function renderStudentList(){
+  const ul=document.getElementById('stu-list');ul.innerHTML='';
+  const fkid=document.getElementById('filter-k').value;
+  const fagid=document.getElementById('filter-ag').value;
+  let stus=sortByName(STUDENTS);
+  if(fkid)stus=stus.filter(s=>s.kampungId===fkid);
+  if(fagid)stus=stus.filter(s=>s.groupId===fagid);
+  if(!stus.length){ul.innerHTML='<li style="color:var(--muted);font-size:13px;padding:8px">No students found.</li>';return;}
+  stus.forEach((s,i)=>{
+    const k=KAMPUNGS.find(x=>x.id===s.kampungId);
+    const ag=AGE_GROUPS.find(x=>x.id===s.groupId);
+    const g=s.gender||'U';
+    const gLabel=g==='M'?'♂ M':g==='F'?'♀ F':'–';
+    const li=document.createElement('li');
+    li.innerHTML=`<span style="color:var(--muted);font-size:11px;min-width:22px">${i+1}</span>
+      ${avatarHtml(s,28)}
+      <span class="iname">${escHtml(s.name)}</span>
+      <span class="agebadge" style="font-size:10px">${s.age?s.age+' yrs':'–'}</span>
+      <span class="gbadge ${g}" style="font-size:10px">${gLabel}</span>
+      <span class="isub">${k?escHtml(k.name):''} · ${ag?escHtml(ag.name):''}</span>
+      <button class="mbtn sec" style="padding:4px 10px;font-size:11px;flex-shrink:0" onclick="openEditModal('${s.id}')">✏️ Edit</button>
+      <button class="mbtn del" style="padding:4px 10px;font-size:11px;flex-shrink:0" onclick="deleteStu('${s.id}')">✕</button>`;
+    ul.appendChild(li);
+  });
+}
+function addStudent(){
+  const kid=document.getElementById('stu-k').value;
+  const agid=document.getElementById('stu-ag').value;
+  if(!kid){showToast('⚠️ Select a kampung.','er');return;}
+  if(!agid){showToast('⚠️ Select an age group.','er');return;}
+  const n=document.getElementById('new-stu').value.trim();
+  if(!n){showToast('⚠️ Enter student name.','er');return;}
+  const ageRaw=parseInt(document.getElementById('new-age').value)||null;
+  STUDENTS.push({id:mkId(),name:n,kampungId:kid,groupId:agid,gender:newGender,age:ageRaw,photo:newPhotoB64});
+  svStu();
+  document.getElementById('new-stu').value='';
+  document.getElementById('new-age').value='';
+  newPhotoB64=null;
+  const prev=document.getElementById('new-photo-preview');
+  prev.innerHTML='📷';prev.className='photo-placeholder';prev.style.cssText='';
+  document.getElementById('new-stu-photo').value='';
+  renderStudentList();renderStats();renderAtt();
+  showToast('✅ Student "'+n+'" added.');
+}
+function deleteStu(sid){
+  const s=STUDENTS.find(x=>x.id===sid);
+  openModal('Remove Student',`Remove "<strong>${escHtml(s.name)}</strong>"?`,()=>{
+    STUDENTS=STUDENTS.filter(x=>x.id!==sid);svStu();
+    renderStudentList();renderStats();renderAtt();showToast('🗑️ Student removed.');
+  });
+}
+
+// ══ EDIT STUDENT MODAL
+function openEditModal(sid){
+  const s=STUDENTS.find(x=>x.id===sid);if(!s)return;
+  editStuId=sid;editGender=s.gender||'M';editPhotoB64=s.photo||null;
+  document.getElementById('edit-name').value=s.name;
+  document.getElementById('edit-age').value=s.age||'';
+  const ek=document.getElementById('edit-kampung');
+  ek.innerHTML='';KAMPUNGS.forEach(k=>ek.innerHTML+=`<option value="${k.id}"${k.id===s.kampungId?' selected':''}>${escHtml(k.name)}</option>`);
+  const eg=document.getElementById('edit-group');
+  eg.innerHTML='';AGE_GROUPS.forEach(g=>eg.innerHTML+=`<option value="${g.id}"${g.id===s.groupId?' selected':''}>${escHtml(g.name)}</option>`);
+  setEditGender(editGender);renderEditPhotoPreview();
+  document.getElementById('edit-modal').classList.add('show');
+}
+function closeEditModal(){document.getElementById('edit-modal').classList.remove('show');editStuId=null;}
+function saveEditStudent(){
+  const n=document.getElementById('edit-name').value.trim();
+  if(!n){showToast('⚠️ Name cannot be empty.','er');return;}
+  const kid=document.getElementById('edit-kampung').value;
+  const gid=document.getElementById('edit-group').value;
+  const ageRaw=parseInt(document.getElementById('edit-age').value)||null;
+  const idx=STUDENTS.findIndex(x=>x.id===editStuId);if(idx===-1)return;
+  STUDENTS[idx]={...STUDENTS[idx],name:n,kampungId:kid,groupId:gid,gender:editGender,age:ageRaw,photo:editPhotoB64};
+  svStu();closeEditModal();
+  renderStudentList();renderStats();renderAtt();
+  if(currentTab==='report')renderReport();
+  showToast('✅ Student updated.');
+}
+function deleteStuFromModal(){
+  const s=STUDENTS.find(x=>x.id===editStuId);if(!s)return;
+  closeEditModal();
+  openModal('Remove Student',`Remove "<strong>${escHtml(s.name)}</strong>"?`,()=>{
+    STUDENTS=STUDENTS.filter(x=>x.id!==editStuId);svStu();
+    renderStudentList();renderStats();renderAtt();showToast('🗑️ Student removed.');
+  });
+}
+
+// ══ CSV
+function csvEsc(v){
+  if(v==null)return'';
+  const s=String(v);
+  return (s.includes(',')||s.includes('"')||s.includes('\n'))?`"${s.replace(/"/g,'""')}"`  :s;
+}
+function exportCSV(){
+  const rows=[['id','name','age','gender','kampung','ageGroup'].join(',')];
+  sortByName(STUDENTS).forEach(s=>{
+    const k=KAMPUNGS.find(x=>x.id===s.kampungId);
+    const ag=AGE_GROUPS.find(x=>x.id===s.groupId);
+    rows.push([s.id,s.name,s.age||'',s.gender||'M',k?k.name:'',ag?ag.name:''].map(csvEsc).join(','));
+  });
+  dlFile('SundayClass_Students.csv',rows.join('\r\n'),'text/csv');
+  showToast('✅ Students CSV exported!');
+}
+function exportAttendanceCSV(){
+  const sorted=[...DATES].sort();
+  const rows=[['id','name','age','gender','kampung','ageGroup',...sorted,'totalPresent','rate%'].join(',')];
+  sortByName(STUDENTS).forEach(s=>{
+    const k=KAMPUNGS.find(x=>x.id===s.kampungId);
+    const ag=AGE_GROUPS.find(x=>x.id===s.groupId);
+    const attCols=sorted.map(d=>ATT[aKey(s.id,d)]||'-');
+    const tot=attCols.filter(v=>v==='P').length;
+    rows.push([s.id,s.name,s.age||'',s.gender||'M',k?k.name:'',ag?ag.name:'',...attCols,tot,sorted.length?Math.round(tot/sorted.length*100)+'%':'0%'].map(csvEsc).join(','));
+  });
+  dlFile('SundayClass_Attendance.csv',rows.join('\r\n'),'text/csv');
+  showToast('✅ Attendance CSV exported!');
+}
+function dlFile(name,content,type){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([content],{type}));
+  a.download=name;a.click();
+}
+function importCSV(e){
+  const file=e.target.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    try{
+      const lines=ev.target.result.split(/\r?\n/).filter(l=>l.trim());
+      const hdrs=parseCSV(lines[0]).map(h=>h.toLowerCase().replace(/\s/g,''));
+      const iId=hdrs.indexOf('id'),iName=hdrs.indexOf('name');
+      const iAge=hdrs.indexOf('age'),iGender=hdrs.indexOf('gender');
+      const iK=hdrs.indexOf('kampung'),iAG=hdrs.indexOf('agegroup');
+      if(iName===-1){showToast('❌ CSV must have a "name" column.','er');return;}
+      let added=0,updated=0;
+      lines.slice(1).forEach(line=>{
+        const col=parseCSV(line);
+        const name=(col[iName]||'').trim();if(!name)return;
+        const id=iId>=0?(col[iId]||'').trim():'';
+        const kName=(iK>=0?col[iK]||'':'').trim();
+        const agName=(iAG>=0?col[iAG]||'':'').trim();
+        const k=KAMPUNGS.find(x=>x.name===kName);
+        const ag=AGE_GROUPS.find(x=>x.name===agName);
+        const age=iAge>=0?parseInt(col[iAge])||null:null;
+        const gender=(iGender>=0?(col[iGender]||'M').toUpperCase():'M')==='F'?'F':'M';
+        const existing=id?STUDENTS.find(s=>s.id===id):null;
+        if(existing){existing.name=name;if(age!=null)existing.age=age;existing.gender=gender;if(k)existing.kampungId=k.id;if(ag)existing.groupId=ag.id;updated++;}
+        else{if(!k||!ag)return;STUDENTS.push({id:mkId(),name,kampungId:k.id,groupId:ag.id,gender,age,photo:null});added++;}
+      });
+      svStu();renderManage();renderStats();renderAtt();
+      showToast(`✅ Import: ${added} added, ${updated} updated.`);
+    }catch(err){showToast('❌ Import error: '+err.message,'er');}
+    e.target.value='';
+  };r.readAsText(file);
+}
+function parseCSV(line){
+  const res=[];let cur='';let inQ=false;
+  for(let i=0;i<line.length;i++){
+    const c=line[i];
+    if(c==='"'){if(inQ&&line[i+1]==='"'){cur+='"';i++;}else inQ=!inQ;}
+    else if(c===','&&!inQ){res.push(cur.trim());cur='';}
+    else cur+=c;
+  }
+  res.push(cur.trim());return res;
+}
+
+// ══ MIGRATE FROM v3 / v4 / v5
+function migrateFromOld(){
+  const oldVersions=[
+    {k:'sca_k_v3',ag:'sca_ag_v3',stu:'sca_stu_v3',dates:'sca_d_v3',att:'sca_att_v3'},
+    {k:'sca_k_v4',ag:'sca_ag_v4',stu:'sca_stu_v4',dates:'sca_d_v4',att:'sca_att_v4'},
+    {k:'sca_k_v5',ag:'sca_ag_v5',stu:'sca_stu_v5',dates:'sca_d_v5',att:'sca_att_v5'},
+    {k:'sca_k_v6',ag:'sca_ag_v6',stu:'sca_stu_v6',dates:'sca_d_v6',att:'sca_att_v6'},
+  ];
+  let stats={kampungs:0,groups:0,students:0,dates:0,att:0};
+  let found=false;
+  oldVersions.forEach(OLD=>{
+    const oK=ld(OLD.k),oAG=ld(OLD.ag),oStu=ld(OLD.stu),oD=ld(OLD.dates),oAtt=ld(OLD.att);
+    if(!oK&&!oStu&&!oAtt)return;
+    found=true;
+    if(oK)oK.forEach(ok=>{if(!KAMPUNGS.find(k=>k.id===ok.id||k.name===ok.name)){KAMPUNGS.push({id:ok.id,name:ok.name});stats.kampungs++;}});
+    if(oAG)oAG.forEach(og=>{
+      if(!AGE_GROUPS.find(g=>g.id===og.id||g.name===og.name)){
+        const used=AGE_GROUPS.map(g=>g.colorIdx%6);
+        const ci=[0,1,2,3,4,5].find(c=>!used.includes(c))??AGE_GROUPS.length%6;
+        AGE_GROUPS.push({id:og.id,name:og.name,colorIdx:og.colorIdx??ci});stats.groups++;
+      }
+    });
+    if(oStu)oStu.forEach(os=>{
+      if(!STUDENTS.find(s=>s.id===os.id)){
+        const kOk=KAMPUNGS.find(k=>k.id===os.kampungId);
+        const gOk=AGE_GROUPS.find(g=>g.id===os.groupId);
+        STUDENTS.push({id:os.id,name:os.name,
+          kampungId:kOk?os.kampungId:KAMPUNGS[0]?.id||os.kampungId,
+          groupId:gOk?os.groupId:AGE_GROUPS[0]?.id||os.groupId,
+          gender:os.gender||'M',age:os.age||null,photo:os.photo||null});
+        stats.students++;
+      }
+    });
+    if(oD)oD.forEach(d=>{if(!DATES.includes(d)){DATES.push(d);stats.dates++;}});
+    if(oAtt&&typeof oAtt==='object')Object.entries(oAtt).forEach(([key,val])=>{if(!ATT[key]){ATT[key]=val;stats.att++;}});
+  });
+  if(!found){showToast('⚠️ No previous version data found.','er');return;}
+  DATES.sort();svK();svAG();svStu();svD();svAtt();
+  if(!DATES.includes(curDate))curDate=DATES[0]||todayISO();
+  renderManage();renderStats();renderAtt();renderDatePills();
+  document.getElementById('hdate').textContent=fmtDate(curDate);
+  const msg=`✅ Migrated: ${stats.kampungs} kampungs, ${stats.groups} groups, ${stats.students} students, ${stats.dates} dates, ${stats.att} attendance records.`;
+  showToast('✅ Migration complete!');
+  const el=document.getElementById('migrate-status');el.style.display='block';el.style.color='#166534';el.textContent=msg;
+  const btn=document.getElementById('migrate-btn');btn.textContent='✅ Done';btn.disabled=true;btn.style.opacity='0.6';
+}
+function checkMigrationAvailable(){
+  const hasOld=['sca_k_v3','sca_stu_v3','sca_k_v4','sca_stu_v4','sca_k_v5','sca_stu_v5','sca_k_v6','sca_stu_v6'].some(k=>localStorage.getItem(k));
+  if(!hasOld)document.getElementById('migrate-card').style.display='none';
+}
+
+// ══ REMOVE EMPTY KAMPUNGS
+function removeEmptyKampungs(){
+  const empty = KAMPUNGS.filter(k => !STUDENTS.some(s => s.kampungId === k.id));
+  if(!empty.length){
+    showToast('✅ No empty kampungs found — nothing to remove.');
+    return;
+  }
+  const names = empty.map(k => '<strong>' + escHtml(k.name) + '</strong>').join(', ');
+  openModal('Remove Empty Kampungs',
+    'This will delete ' + empty.length + ' empty kampung(s) with 0 students:<br><br>' + names + '<br><br>Your kampungs that have students will <strong>not</strong> be affected.',
+    () => {
+      const emptyIds = empty.map(k => k.id);
+      KAMPUNGS = KAMPUNGS.filter(k => !emptyIds.includes(k.id));
+      svK();
+      renderManage(); renderStats(); renderAtt();
+      showToast('✅ Removed ' + empty.length + ' empty kampung(s).');
+    }
+  );
+  setTimeout(() => {
+    const ok = document.getElementById('m-ok');
+    if(ok){ ok.textContent = 'Yes, Remove Empty Ones'; ok.className = 'mbtn del'; }
+  }, 10);
+}
+
+// ══ RESET TO MASTER DATA
+function resetToMaster(){
+  openModal('🔄 Restore Master Data',
+    'This will reload all <strong>original students, kampungs and age groups</strong> from the built-in data.<br><br>Your attendance records will be <strong>kept</strong>. Any manually added or edited students will be overwritten.',
+    ()=>{
+      KAMPUNGS   = JSON.parse(JSON.stringify(MASTER_KAMPUNGS));
+      AGE_GROUPS = JSON.parse(JSON.stringify(MASTER_GROUPS));
+      STUDENTS   = JSON.parse(JSON.stringify(MASTER_STUDENTS));
+      // Merge master dates but keep existing dates too
+      MASTER_DATES.forEach(d=>{if(!DATES.includes(d))DATES.push(d);});
+      DATES.sort();
+      svK();svAG();svStu();svD();
+      renderManage();renderStats();renderAtt();renderDatePills();
+      document.getElementById('hdate').textContent=fmtDate(curDate);
+      showToast('✅ Master data restored — '+STUDENTS.length+' students loaded.');
+    }
+  );
+  setTimeout(()=>{
+    const ok=document.getElementById('m-ok');
+    if(ok){ok.textContent='Yes, Restore';ok.className='mbtn add';}
+  },10);
+}
+
+// ══ CLEAR ALL DATA
+function clearAllData(){
+  openModal('⚠️ Clear All Data',
+    'This will permanently delete <strong>all kampungs, students, age groups and attendance records</strong> stored in this browser.<br><br>The app will reset to a completely blank state. This <strong>cannot be undone</strong>.',
+    ()=>{
+      // Clear all storage keys for all versions
+      ['v3','v4','v5','v6'].forEach(v=>{
+        ['sca_k_','sca_ag_','sca_stu_','sca_d_','sca_att_'].forEach(prefix=>{
+          localStorage.removeItem(prefix+v);
+        });
+      });
+      localStorage.removeItem('sca_title_v6');
+      // Reset state
+      KAMPUNGS=[];AGE_GROUPS=[];STUDENTS=[];
+      DATES=nextSundays(3);ATT={};
+      curDate=DATES[0]||todayISO();
+      svK();svAG();svStu();svD();svAtt();
+      renderManage();renderStats();renderAtt();renderDatePills();
+      document.getElementById('hdate').textContent=fmtDate(curDate);
+      showToast('✅ All data cleared. Fresh start!');
+    }
+  );
+  // Change the confirm button to red
+  setTimeout(()=>{
+    const ok=document.getElementById('m-ok');
+    if(ok)ok.textContent='Yes, Delete Everything';
+  },10);
+}
+
+// ══ MODALS
+let _cb=null;
+function openModal(title,body,cb){
+  document.getElementById('m-title').textContent=title;
+  document.getElementById('m-body').innerHTML=body;
+  _cb=cb;document.getElementById('modal-ov').classList.add('show');
+}
+function closeModal(){document.getElementById('modal-ov').classList.remove('show');_cb=null;}
+document.getElementById('m-ok').onclick=()=>{if(_cb)_cb();closeModal();};
+
+// Close on backdrop click
+['modal-ov','edit-modal','edit-k-modal','edit-ag-modal','title-modal','edit-user-modal'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',function(e){
+    if(e.target===this){
+      this.classList.remove('show');
+      if(id==='edit-modal')editStuId=null;
+      if(id==='edit-k-modal')editKId=null;
+      if(id==='edit-ag-modal')editAGId=null;
+      _cb=null;
+    }
+  });
+});
+
+// Enter key in modals
+document.getElementById('edit-k-name').addEventListener('keydown',e=>{if(e.key==='Enter')saveEditKampung();});
+document.getElementById('edit-ag-name').addEventListener('keydown',e=>{if(e.key==='Enter')saveEditAG();});
+document.getElementById('edit-name').addEventListener('keydown',e=>{if(e.key==='Enter')saveEditStudent();});
+document.getElementById('modal-title-input').addEventListener('keydown',e=>{if(e.key==='Enter')saveAppTitleFromModal();});
+
+// ══ TRANSLATIONS
+let _lang=localStorage.getItem('sca_lang')||'en';
+const LANGS={
+  en:{
+    // Login
+    appName:'Sunday School Attendance',appSub:'Attendance Management System',
+    userId:'User ID',password:'Password',signIn:'Sign In →',invalidLogin:'❌ Invalid User ID or Password.',
+    // Header & tabs
+    signOut:'Sign Out',tabAtt:'📋 Attendance',tabReport:'📊 Reports',tabManage:'⚙️ Manage',
+    // Attendance
+    classDate:'📅 Class Date',addDate:'＋ Add Date',saveNow:'💾 Save Now',printPdf:'🖨️ Print / PDF',
+    autoSave:'⏱ Auto-saves every 5 min',present:'✓ Present',absent:'✗ Absent',
+    students:'students',presentLabel:'present',noKampungs:'No kampungs yet. Go to Manage to add kampungs, age groups and students.',
+    male:'♂ M',female:'♀ F',yrs:'yrs',
+    // Report
+    reportTitle:'📊 Student Report — Full Year Summary',allKampungs:'All Kampungs',
+    allGroups:'All Age Groups',allGenders:'All Genders',sortBy:'Sort by:',
+    sortName:'A–Z Name',sortAge:'Age',sortAtt:'Attendance',sortGroup:'Group',
+    printReport:'🖨️ Print Report',searchName:'🔍 Search name…',
+    // Manage
+    settingsTitle:'⚙️ App Settings — Church / School Name',saveNameBtn:'💾 Save Name',
+    kampungsTitle:'🏘️ Kampungs (Villages)',ageGroupsTitle:'👥 Age Groups',
+    studentsTitle:'🧒 Students',addBtn:'＋ Add',addStudentBtn:'＋ Add Student',
+    exportStudents:'⬇ Export Students (CSV)',importStudents:'⬆ Import Students (CSV)',
+    exportAtt:'📋 Export Attendance (CSV)',
+    userMgmt:'👤 User Management',adminOnly:'Admin only',addNewUser:'➕ Add New User',
+    userIdPlaceholder:'User ID (e.g. teacher2)',displayName:'Display name',
+    addUserBtn:'＋ Add User',changeOwnPw:'🔑 Change Your Own Password',
+    currentPw:'Current password',newPw:'New password',confirmPw:'Confirm new password',
+    updatePwBtn:'💾 Update Password',
+    roleAdmin:'Admin',roleTeacher:'Teacher',
+    // Appearance
+    appearance:'🎨 Appearance',colourTheme:'Colour Theme',fontSize:'Font Size',
+    language:'🌐 Language',smaller:'Smaller',larger:'Larger',close:'✕ Close',
+    // Print dialog
+    printSettings:'🖨️ Print Settings',whatPrint:'📄 What to Print',
+    paperSize:'📐 Paper Size',orientation:'↔️ Orientation',
+    colourMode:'🎨 Colour Mode',printFont:'🔡 Print Font Size',
+    attLabel:'📋 Attendance',reportLabel:'📊 Report',
+    portrait:'▯ Portrait',landscape:'▭ Landscape',
+    fullColour:'🌈 Full Colour',bw:'⬛ Black & White',
+    smallFont:'Small',medFont:'Medium',largeFont:'Large',
+    openPrint:'🖨️ Open Print Dialog',cancelBtn:'Cancel',confirmBtn:'Confirm',
+    // Misc
+    noStudents:'No students yet — add them in the Manage tab.',
+    autosaveActive:'Auto-save active (every 5 min)',
+    autosaveText:'Auto-saved',savingText:'Saving…',lastSavedAt:'Last saved at',
+  },
+  ms:{
+    appName:'Kehadiran Kelas Ahad',appSub:'Sistem Pengurusan Kehadiran',
+    userId:'ID Pengguna',password:'Kata Laluan',signIn:'Log Masuk →',invalidLogin:'❌ ID Pengguna atau Kata Laluan salah.',
+    signOut:'Log Keluar',tabAtt:'📋 Kehadiran',tabReport:'📊 Laporan',tabManage:'⚙️ Urus',
+    classDate:'📅 Tarikh Kelas',addDate:'＋ Tambah Tarikh',saveNow:'💾 Simpan',printPdf:'🖨️ Cetak / PDF',
+    autoSave:'⏱ Auto-simpan setiap 5 min',present:'✓ Hadir',absent:'✗ Tidak Hadir',
+    students:'pelajar',presentLabel:'hadir',noKampungs:'Tiada kampung lagi. Pergi ke Urus untuk tambah kampung, kumpulan umur dan pelajar.',
+    male:'♂ L',female:'♀ P',yrs:'thn',
+    reportTitle:'📊 Laporan Pelajar — Ringkasan Tahunan',allKampungs:'Semua Kampung',
+    allGroups:'Semua Kumpulan Umur',allGenders:'Semua Jantina',sortBy:'Susun:',
+    sortName:'A–Z Nama',sortAge:'Umur',sortAtt:'Kehadiran',sortGroup:'Kumpulan',
+    printReport:'🖨️ Cetak Laporan',searchName:'🔍 Cari nama…',
+    settingsTitle:'⚙️ Tetapan Aplikasi — Nama Gereja / Sekolah',saveNameBtn:'💾 Simpan Nama',
+    kampungsTitle:'🏘️ Kampung',ageGroupsTitle:'👥 Kumpulan Umur',
+    studentsTitle:'🧒 Pelajar',addBtn:'＋ Tambah',addStudentBtn:'＋ Tambah Pelajar',
+    exportStudents:'⬇ Eksport Pelajar (CSV)',importStudents:'⬆ Import Pelajar (CSV)',
+    exportAtt:'📋 Eksport Kehadiran (CSV)',
+    userMgmt:'👤 Pengurusan Pengguna',adminOnly:'Admin sahaja',addNewUser:'➕ Tambah Pengguna Baru',
+    userIdPlaceholder:'ID Pengguna (cth. guru2)',displayName:'Nama paparan',
+    addUserBtn:'＋ Tambah Pengguna',changeOwnPw:'🔑 Tukar Kata Laluan Anda',
+    currentPw:'Kata laluan semasa',newPw:'Kata laluan baru',confirmPw:'Sahkan kata laluan baru',
+    updatePwBtn:'💾 Kemaskini Kata Laluan',
+    roleAdmin:'Admin',roleTeacher:'Guru',
+    appearance:'🎨 Penampilan',colourTheme:'Tema Warna',fontSize:'Saiz Fon',
+    language:'🌐 Bahasa',smaller:'Lebih kecil',larger:'Lebih besar',close:'✕ Tutup',
+    printSettings:'🖨️ Tetapan Cetak',whatPrint:'📄 Apa yang dicetak',
+    paperSize:'📐 Saiz Kertas',orientation:'↔️ Orientasi',
+    colourMode:'🎨 Mod Warna',printFont:'🔡 Saiz Fon Cetak',
+    attLabel:'📋 Kehadiran',reportLabel:'📊 Laporan',
+    portrait:'▯ Potret',landscape:'▭ Landskap',
+    fullColour:'🌈 Warna Penuh',bw:'⬛ Hitam & Putih',
+    smallFont:'Kecil',medFont:'Sederhana',largeFont:'Besar',
+    openPrint:'🖨️ Buka Dialog Cetak',cancelBtn:'Batal',confirmBtn:'Sahkan',
+    noStudents:'Tiada pelajar lagi — tambah dalam tab Urus.',
+    autosaveActive:'Auto-simpan aktif (setiap 5 min)',
+    autosaveText:'Auto-disimpan',savingText:'Menyimpan…',lastSavedAt:'Disimpan pada',
+  },
+  zh:{
+    appName:'主日学出席记录',appSub:'出席管理系统',
+    userId:'用户名',password:'密码',signIn:'登录 →',invalidLogin:'❌ 用户名或密码错误。',
+    signOut:'登出',tabAtt:'📋 出席',tabReport:'📊 报告',tabManage:'⚙️ 管理',
+    classDate:'📅 上课日期',addDate:'＋ 添加日期',saveNow:'💾 立即保存',printPdf:'🖨️ 打印 / PDF',
+    autoSave:'⏱ 每5分钟自动保存',present:'✓ 出席',absent:'✗ 缺席',
+    students:'名学生',presentLabel:'出席',noKampungs:'尚无村庄。请到管理添加村庄、年龄组和学生。',
+    male:'♂ 男',female:'♀ 女',yrs:'岁',
+    reportTitle:'📊 学生报告 — 全年汇总',allKampungs:'全部村庄',
+    allGroups:'全部年龄组',allGenders:'全部性别',sortBy:'排序：',
+    sortName:'A–Z 姓名',sortAge:'年龄',sortAtt:'出席率',sortGroup:'组别',
+    printReport:'🖨️ 打印报告',searchName:'🔍 搜索姓名…',
+    settingsTitle:'⚙️ 应用设置 — 教会 / 学校名称',saveNameBtn:'💾 保存名称',
+    kampungsTitle:'🏘️ 村庄',ageGroupsTitle:'👥 年龄组',
+    studentsTitle:'🧒 学生',addBtn:'＋ 添加',addStudentBtn:'＋ 添加学生',
+    exportStudents:'⬇ 导出学生 (CSV)',importStudents:'⬆ 导入学生 (CSV)',
+    exportAtt:'📋 导出出席记录 (CSV)',
+    userMgmt:'👤 用户管理',adminOnly:'仅管理员',addNewUser:'➕ 添加新用户',
+    userIdPlaceholder:'用户名 (如 teacher2)',displayName:'显示名称',
+    addUserBtn:'＋ 添加用户',changeOwnPw:'🔑 修改自己的密码',
+    currentPw:'当前密码',newPw:'新密码',confirmPw:'确认新密码',
+    updatePwBtn:'💾 更新密码',
+    roleAdmin:'管理员',roleTeacher:'教师',
+    appearance:'🎨 外观',colourTheme:'颜色主题',fontSize:'字体大小',
+    language:'🌐 语言',smaller:'更小',larger:'更大',close:'✕ 关闭',
+    printSettings:'🖨️ 打印设置',whatPrint:'📄 打印内容',
+    paperSize:'📐 纸张大小',orientation:'↔️ 方向',
+    colourMode:'🎨 颜色模式',printFont:'🔡 打印字体大小',
+    attLabel:'📋 出席',reportLabel:'📊 报告',
+    portrait:'▯ 纵向',landscape:'▭ 横向',
+    fullColour:'🌈 彩色',bw:'⬛ 黑白',
+    smallFont:'小',medFont:'中',largeFont:'大',
+    openPrint:'🖨️ 打开打印对话框',cancelBtn:'取消',confirmBtn:'确认',
+    noStudents:'暂无学生 — 请在管理标签中添加。',
+    autosaveActive:'自动保存已启用（每5分钟）',
+    autosaveText:'已自动保存',savingText:'保存中…',lastSavedAt:'保存于',
+  }
+};
+const LANG_NAMES={en:'English',ms:'Bahasa Malaysia',zh:'中文'};
+function T(key){
+  try{return (LANGS[_lang]&&LANGS[_lang][key])||LANGS['en'][key]||key;}
+  catch(e){return key;}
+}
+function setLang(lang){
+  _lang=lang;
+  localStorage.setItem('sca_lang',lang);
+  applyLang();
+  syncAppearanceUI();
+  showToast('🌐 '+(LANG_NAMES[lang]||lang));
+}
+function applyLang(){
+  // Login page
+  _tid('login-title',T('appName'));
+  _qtext('#login-screen p',T('appSub'));
+  _qtext('#lerr','❌ '+T('invalidLogin').replace('❌ ',''));
+  _qlabel('#uid',T('userId'));_qlabel('#pwd',T('password'));
+  _qval('.lbtn',T('signIn'));
+  // Header
+  _qval('.hbtn[onclick="doLogout()"]',T('signOut'));
+  // Tabs
+  _tid('tab-att',T('tabAtt'));_tid('tab-report',T('tabReport'));_tid('tab-manage',T('tabManage'));
+  // Attendance bar
+  _qtext('.dbar-top label',T('classDate'));
+  _qval('.addbtn',T('addDate'));
+  _tid('save-btn',T('saveNow'));
+  _qval('.pdfbtn',T('printPdf'));
+  _qtext('#autosave-next',T('autoSave'));
+  // Report tab
+  _qtext('#panel-report .report-controls h3',T('reportTitle'));
+  _qoption('#rep-kampung','',T('allKampungs'));
+  _qoption('#rep-group','',T('allGroups'));
+  _qoption('#rep-gender','',T('allGenders'));
+  _qoption('#rep-gender','M','♂ '+(T('male').replace('♂ ','')||'Male'));
+  _qoption('#rep-gender','F','♀ '+(T('female').replace('♀ ','')||'Female'));
+  _qplaceholder('#rep-search',T('searchName'));
+  _qtext('.rrow span[style*="Sort by"]',T('sortBy'));
+  _tid('rsort-name',T('sortName'));_tid('rsort-age',T('sortAge'));
+  _tid('rsort-att',T('sortAtt'));_tid('rsort-group',T('sortGroup'));
+  _qval('.rrow .pdfbtn',T('printReport'));
+  // Print dialog
+  _qtext('.print-box h3',T('printSettings'));
+  // Manage tab (re-render handles most dynamic content)
+  // Appearance panel
+  _qtext('.ap-title',T('appearance'));
+  // Re-render attendance to pick up new P/A button text + meta labels
+  if(typeof renderAtt==='function')renderAtt();
+}
+// Helpers
+function _tid(id,txt){const e=document.getElementById(id);if(e)e.textContent=txt;}
+function _qtext(sel,txt){const e=document.querySelector(sel);if(e)e.textContent=txt;}
+function _qval(sel,txt){const e=document.querySelector(sel);if(e)e.textContent=txt;}
+function _qlabel(inputId,txt){
+  const inp=document.getElementById(inputId);
+  if(inp){const lbl=inp.closest('.fg')?.querySelector('label');if(lbl)lbl.textContent=txt;}
+}
+function _qplaceholder(sel,txt){const e=document.querySelector(sel);if(e)e.placeholder=txt;}
+function _qoption(selId,val,txt){
+  const sel=document.getElementById(selId)||document.querySelector(selId);
+  if(!sel)return;
+  const opt=[...sel.options].find(o=>o.value===val);if(opt)opt.textContent=txt;
+}
+
+// ══ APPEARANCE
+const THEME_NAMES={
+  'default':'🔵 Blue (Default)',
+  'dark':'🌙 Dark Mode',
+  'warm':'🟤 Warm Brown',
+  'forest':'🌿 Forest Green',
+  'purple':'💜 Purple'
+};
+const FS_NAMES={
+  'xs':'Extra Small — 11px',
+  'sm':'Small — 13px',
+  'md':'Medium — 14px (Default)',
+  'lg':'Large — 16px',
+  'xl':'Extra Large — 18px'
+};
+
+function toggleAppearance(){
+  const p=document.getElementById('ap-panel');
+  p.classList.toggle('open');
+  if(p.classList.contains('open'))syncAppearanceUI();
+}
+function closeAppearanceOnOutside(e){
+  const p=document.getElementById('ap-panel');
+  const btn=document.getElementById('ap-btn');
+  if(p.classList.contains('open')&&!p.contains(e.target)&&!btn.contains(e.target)){
+    p.classList.remove('open');
+  }
+}
+document.addEventListener('click',closeAppearanceOnOutside);
+
+function syncAppearanceUI(){
+  const curTheme=document.documentElement.getAttribute('data-theme')||'default';
+  const curFs=document.documentElement.getAttribute('data-fs')||'md';
+  document.querySelectorAll('.theme-dot').forEach(d=>{
+    d.classList.toggle('active',d.dataset.theme===curTheme);
+  });
+  document.querySelectorAll('.fs-btn').forEach(b=>{
+    b.classList.toggle('active',b.dataset.fs===curFs);
+  });
+  document.querySelectorAll('.lang-btn').forEach(b=>{
+    b.classList.toggle('active',b.dataset.lang===_lang);
+  });
+  document.getElementById('theme-name').textContent=THEME_NAMES[curTheme]||curTheme;
+  document.getElementById('fs-desc').textContent=FS_NAMES[curFs]||curFs;
+  const ln=document.getElementById('lang-name');
+  if(ln)ln.textContent=LANG_NAMES[_lang]||_lang;
+}
+
+function setTheme(t){
+  if(t==='default'){document.documentElement.removeAttribute('data-theme');}
+  else{document.documentElement.setAttribute('data-theme',t);}
+  localStorage.setItem('sca_theme',t);
+  syncAppearanceUI();
+  showToast('🎨 Theme: '+(THEME_NAMES[t]||t));
+}
+
+function setFontSize(fs){
+  document.documentElement.setAttribute('data-fs',fs);
+  localStorage.setItem('sca_fs',fs);
+  syncAppearanceUI();
+  showToast('🔡 Font: '+(FS_NAMES[fs]||fs));
+}
+
+// ══ TOAST
+function showToast(msg,type='ok'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className=`toast ${type} show`;
+  setTimeout(()=>t.className=`toast ${type}`,2800);
+}
+
+// ══ AUTO-RESTORE SESSION ON PAGE LOAD
+(function restoreSession(){
+  try{
+    const savedId=sessionStorage.getItem('sca_session');
+    if(!savedId)return;
+    USERS_LIST=loadUsers();
+    const u=findUser(savedId);
+    if(u){
+      currentUser={...u};
+      document.getElementById('login-screen').style.display='none';
+      document.getElementById('app-screen').style.display='block';
+      document.getElementById('ubadge').textContent='👤 '+u.name;
+      initApp();
+    } else {
+      sessionStorage.removeItem('sca_session');
+    }
+  }catch(e){
+    try{sessionStorage.removeItem('sca_session');}catch(e2){}
+  }
+})();
+</script>
+</body>
+</html>
